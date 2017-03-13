@@ -1,6 +1,9 @@
 /* Require the HTML Element Shim */
 require('./customElementShim.js');
 
+/** PF Accordion Component **/
+require('pf-accordion.component.js');
+
 /** PF Alert Component **/
 require('pf-alert.component.js');
 
