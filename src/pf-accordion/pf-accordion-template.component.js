@@ -52,12 +52,12 @@ export class PfAccordionTemplate extends HTMLElement {
   }
 
   show () {
-    let maxHeight = this.querySelector('pf-accordion-body').clientHeight;
     this._transitioning = true;
     this._state = 'show';
-    this.style.height = maxHeight + 'px';
     this.classList.remove('collapse');
     this.classList.add('collapsing');
+    let maxHeight = this.querySelector('pf-accordion-body').clientHeight;
+    this.style.height = maxHeight + 'px';
   }
 
   hide () {
