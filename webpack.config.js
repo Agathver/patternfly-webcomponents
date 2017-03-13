@@ -7,6 +7,7 @@ module.exports = {
 
   entry: {
     'patternfly': './src/patternfly',
+    'pf-accordion': './src/pf-accordion/index',
     'pf-alert': './src/pf-alert/index',
     'pf-i18n': './src/pf-i18n/index',
     'pf-hello': './src/pf-hello/index',
@@ -21,6 +22,7 @@ module.exports = {
 
   resolve: {
     root: [
+      path.join(__dirname, "src/pf-accordion"),
       path.join(__dirname, "src/pf-alert"),
       path.join(__dirname, "src/pf-hello"),
       path.join(__dirname, "src/pf-i18n"),
