@@ -64,6 +64,26 @@ class PfUtil {
       x: window.pageXOffset || document.documentElement.scrollLeft
     };
   }
+
+  // the following 2 methods were taken from bootstrap.native - Native Javascript for Bootstrap 4
+  // https://github.com/thednp/bootstrap.native
+  // Copyright (c) 2015 dnp_theme
+
+  getOuterHeight (child) {
+    let childStyle = child && window.getComputedStyle(child),
+      btp = /px/.test(childStyle.borderTopWidth) ? Math.round(childStyle.borderTopWidth.replace('px', '')) : 0,
+      btb = /px/.test(childStyle.borderBottomWidth) ? Math.round(childStyle.borderBottomWidth.replace('px', '')) : 0,
+      mtp = /px/.test(childStyle.marginTop) ? Math.round(childStyle.marginTop.replace('px', '')) : 0,
+      mbp = /px/.test(childStyle.marginBottom) ? Math.round(childStyle.marginBottom.replace('px', '')) : 0;
+    return child.clientHeight + parseInt( btp ) + parseInt( btb ) + parseInt( mtp ) + parseInt( mbp );
+  }
+  getMaxHeight (parent) { // get collapse trueHeight and border
+    let parentHeight = 0;
+    for (let k = 0, ll = parent.children[length]; k < ll; k++) {
+      parentHeight += this.getOuterHeight(parent.children[k]);
+    }
+    return parentHeight;
+  }
 }
 let pfUtil = new PfUtil();
 export {pfUtil};
