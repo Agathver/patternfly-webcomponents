@@ -1,2 +1,2 @@
-/** PF Tabs Component **/
+/** PF Accordion Component **/
 require('pf-accordion.component');
