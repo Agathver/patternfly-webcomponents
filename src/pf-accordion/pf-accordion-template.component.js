@@ -24,7 +24,7 @@ export class PfAccordionTemplate extends HTMLElement {
     this.addEventListener('transitionend', this._handleTransitionEnd);
 
     this._initialized = true;
-    this.dispatchEvent(new CustomEvent('initialized'));
+    this.dispatchEvent(new Event('initialized'));
   }
 
   /**
@@ -65,7 +65,10 @@ export class PfAccordionTemplate extends HTMLElement {
   show () {
     if (this._state !== 'shown' && !this._transitioning) {
       this._transitioning = true;
-      this.dispatchEvent(new CustomEvent('show.bs.collapse'));
+      this.dispatchEvent(new CustomEvent('show.bs.collapse', {
+        bubbles: true,
+        cancelable: false
+      }));
       this._state = 'shown';
       this.classList.remove('collapse');
       this.classList.add('collapsing');
@@ -80,7 +83,10 @@ export class PfAccordionTemplate extends HTMLElement {
       let body = this.querySelector('pf-accordion-body');
       let maxHeight = body ? body.clientHeight : 0;
       this._transitioning = true;
-      this.dispatchEvent(new CustomEvent('hide.bs.collapse'));
+      this.dispatchEvent(new CustomEvent('hide.bs.collapse', {
+        bubbles: true,
+        cancelable: false
+      }));
       this._state = 'hidden';
       this.style.height = maxHeight + 'px';
 
@@ -110,9 +116,13 @@ export class PfAccordionTemplate extends HTMLElement {
       this.classList.add('collapse');
       if (this._state === 'shown') {
         this.classList.add('in');
-        this.dispatchEvent(new CustomEvent('shown.bs.collapse'));
+        this.dispatchEvent(new CustomEvent('shown.bs.collapse', {
+          bubbles: true
+        }));
       } else {
-        this.dispatchEvent(new CustomEvent('hidden.bs.collapse'));
+        this.dispatchEvent(new CustomEvent('hidden.bs.collapse', {
+          bubbles: true
+        }));
       }
       this.style.height = '';
       this._transitioning = false;

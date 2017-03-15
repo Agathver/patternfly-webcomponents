@@ -1,5 +1,6 @@
 describe ("PatternFly Accordion Component Tests", function () {
-  var accordion, accordionPanel, accordionHeading, accordionTemplate, accordionHeadingToggle;
+  var accordion, accordionPanel, accordionHeading, accordionTemplate, accordionHeadingToggle,
+    accordionPanel2, accordionHeading2, accordionTemplate2, accordionHeadingToggle2;
 
   function addElementToBody (element) {
     var promise = new Promise(function (resolve) {
@@ -28,14 +29,26 @@ describe ("PatternFly Accordion Component Tests", function () {
     accordionHeading.appendChild(accordionHeadingToggle);
     accordionPanel.appendChild(accordionHeading);
     accordionPanel.appendChild(accordionTemplate);
-    accordion.appendChild(accordionPanel);
+
+    accordionPanel2 = document.createElement('pf-accordion-panel');
+    accordionPanel2.id = 'pfAccordionPanel2';
+    accordionHeading2 = document.createElement('pf-accordion-heading');
+    accordionHeading2.id = 'pfAccordionHeading2';
+    accordionTemplate2 = document.createElement('pf-accordion-template');
+    accordionHeading2.id = 'pfAccordionTemplate2';
+    accordionHeadingToggle2 = document.createElement('a');
+    accordionHeadingToggle2.setAttribute('data-toggle','collapse');
+    accordionHeading2.appendChild(accordionHeadingToggle2);
+    accordionPanel2.appendChild(accordionHeading2);
+    accordionPanel2.appendChild(accordionTemplate2);
+    accordion.appendChild(accordionPanel2);
   });
 
   afterEach(function () {
     document.body.removeChild(accordion);
   });
 
-  it('put the correct class and aria attributes for an accordion', function () {
+  it('put the correct class and aria attributes', function () {
     return addElementToBody(accordion).then(function () {
       expect(accordion.classList.contains('panel-group')).toBe(true);
       expect(accordion.getAttribute('role')).toBe('tablist');
@@ -90,6 +103,16 @@ describe ("PatternFly Accordion Component Tests", function () {
     return addElementToBody(accordion).then(function () {
       accordionTemplate.show();
       expect(accordionHeadingToggle.classList.contains('collapse')).toBe(true);
+    });
+  });
+
+  it('closes other open panel when another is opened', function () {
+    accordionTemplate.state = 'shown';
+    return addElementToBody(accordion).then(function () {
+      expect(accordionTemplate.classList.contains('in')).toBe(true);
+      accordionTemplate2.state = 'shown';
+      expect(accordionTemplate.classList.contains('in')).toBe(false);
+      expect(accordionTemplate.state).toBe('hidden');
     });
   });
 
