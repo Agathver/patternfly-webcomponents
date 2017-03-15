@@ -9,31 +9,30 @@ export class PfAccordionTemplate extends HTMLElement {
    * Called when an instance was inserted into the document
    */
   attachedCallback () {
+    this.classList.add('panel-collapse');
+    this.classList.add('collapse');
+    this.setAttribute('role', 'tabpanel');
+
+    if (this.hasAttribute('open')) {
+      this.state = 'show';
+      this.classList.add('in');
+    } else if (this.classList.contains('in')) {
+      this.state = 'show';
+      this.setAttribute('open','');
+    } else {
+      this.state = 'hide';
+    }
     this.addEventListener('transitionend', this._handleTransitionEnd);
-  }
 
-
-  /**
-   * Called when element's attribute value has changed
-   *
-   * @param {string} attrName The attribute name that has changed
-   * @param {string} oldValue The old attribute value
-   * @param {string} newValue The new attribute value
-   */
-  attributeChangedCallback (attrName, oldValue, newValue) {
-
+    this._initialized = true;
+    this.dispatchEvent(new CustomEvent('initialized'));
   }
 
   /**
    * Called when an instance of the element is created
    */
   createdCallback () {
-    this.classList.add('panel-collapse');
-    if (this.classList.contains('in')) {
-      this._state = 'show';
-    } else {
-      this._state = 'hide';
-    }
+    this._initialized = false;
     this._transitioning = false;
   }
 
@@ -53,7 +52,8 @@ export class PfAccordionTemplate extends HTMLElement {
 
   show () {
     this._transitioning = true;
-    this._state = 'show';
+    this.dispatchEvent(new CustomEvent('show.bs.collapse'));
+    this.state = 'show';
     this.classList.remove('collapse');
     this.classList.add('collapsing');
     let maxHeight = this.querySelector('pf-accordion-body').clientHeight;
@@ -63,7 +63,8 @@ export class PfAccordionTemplate extends HTMLElement {
   hide () {
     let maxHeight = this.querySelector('pf-accordion-body').clientHeight;
     this._transitioning = true;
-    this._state = 'hide';
+    this.dispatchEvent(new CustomEvent('hide.bs.collapse'));
+    this.state = 'hide';
     this.style.height = maxHeight + 'px';
 
     let _self = this;
@@ -78,7 +79,7 @@ export class PfAccordionTemplate extends HTMLElement {
   }
 
   toggle () {
-    if (this._state === 'show') {
+    if (this.state === 'show') {
       this.hide();
     } else {
       this.show();
@@ -89,14 +90,16 @@ export class PfAccordionTemplate extends HTMLElement {
     if (this._transitioning) {
       this.classList.remove('collapsing');
       this.classList.add('collapse');
-      if (this._state === 'show') {
+      if (this.state === 'show') {
         this.classList.add('in');
+        this.dispatchEvent(new CustomEvent('shown.bs.collapse'));
+      } else {
+        this.dispatchEvent(new CustomEvent('hidden.bs.collapse'));
       }
       this.style.height = '';
       this._transitioning = false;
     }
   }
-
 
 }
 (function () {

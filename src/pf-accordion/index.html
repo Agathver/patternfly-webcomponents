@@ -13,46 +13,32 @@
     <div class="page-header">
       <h1>Accordion</h1>
     </div>
-    <pf-accordion id="myAccordion" role="tablist" aria-multiselectable="true">
+    <pf-accordion id="myAccordion">
       <pf-accordion-panel>
-        <pf-accordion-heading role="tab" id="headingOne">
+        <pf-accordion-heading id="headingOne">
           <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#myAccordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <a role="button" data-toggle="collapse" data-parent="#myAccordion" href="#collapseOne" aria-controls="collapseOne">
               Collapsible Group Item #1
             </a>
           </h4>
         </pf-accordion-heading>
-        <pf-accordion-template id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+        <pf-accordion-template id="collapseOne" open aria-labelledby="headingOne">
           <pf-accordion-body>
             Collapse CONTENT 1
           </pf-accordion-body>
         </pf-accordion-template>
       </pf-accordion-panel>
       <pf-accordion-panel>
-        <pf-accordion-heading role="tab" id="headingTwo">
+        <pf-accordion-heading id="headingTwo">
           <h4 class="panel-title">
-            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#myAccordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            <a role="button" data-toggle="collapse" data-parent="#myAccordion" href="#collapseTwo" aria-controls="collapseTwo">
               Collapsible Group Item #2
             </a>
           </h4>
         </pf-accordion-heading>
-        <pf-accordion-template id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+        <pf-accordion-template id="collapseTwo" aria-labelledby="headingTwo">
           <pf-accordion-body>
             Collapse CONTENT 2
-          </pf-accordion-body>
-        </pf-accordion-template>
-      </pf-accordion-panel>
-      <pf-accordion-panel>
-        <pf-accordion-heading role="tab" id="headingThree">
-          <h4 class="panel-title">
-            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#myAccordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-              Collapsible Group Item #3
-            </a>
-          </h4>
-        </pf-accordion-heading>
-        <pf-accordion-template id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-          <pf-accordion-body>
-            Collapse CONTENT 3
           </pf-accordion-body>
         </pf-accordion-template>
       </pf-accordion-panel>
