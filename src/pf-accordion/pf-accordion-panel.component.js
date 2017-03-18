@@ -16,33 +16,15 @@ export class PfAccordionPanel extends HTMLElement {
    * Called when an instance of the element was inserted into the document
    */
   attachedCallback () {
-    this.classList.add('panel');
-    this._context = this.getAttribute('context') || 'default';
-    switch (this._context) {
-      case 'primary':
-        this.classList.add(this._classes.context.primary);
-        break;
-      case 'warning':
-        this.classList.add(this._classes.context.warning);
-        break;
-      case 'success':
-        this.classList.add(this._classes.context.success);
-        break;
-      case 'danger':
-        this.classList.add(this._classes.context.danger);
-        break;
-      default:
-        this.classList.add(this._classes.context.default);
-        break;
-    }
+    this._setClasses();
   }
 
   /**
    * Returns a list of attributes on which we are interested to track changes
    * @returns {[string]}
    */
-  static get observedAttributes() {
-    return ['open', 'context'];
+  static get observedAttributes () {
+    return ['open', 'class'];
   }
 
   /**
@@ -57,26 +39,42 @@ export class PfAccordionPanel extends HTMLElement {
       case 'open':
         this.state = this.hasAttribute('open') ? 'shown' : 'hidden';
         break;
-      case 'context':
-        this.classList.remove(this._classes.context[oldValue || 'default'] || this._classes.context.default);
-        this.classList.add(this._classes.context[newValue || 'default'] || this._classes.context.default);
+      case 'class':
+        this._setClasses();
         break;
     }
   }
 
-  _initDefaults() {
+  /**
+   * Sets default constants
+   */
+  _initDefaults () {
     this._classes = {
-      "context" : {
-        "default" : "panel-default",
-        "info": "panel-info",
-        "primary": "panel-primary",
-        "warning": "panel-warning",
-        "success": "panel-success",
-        "danger": "panel-danger"
+      'context' : {
+        'classes' : ['panel-default', 'panel-primary', 'panel-warning', 'panel-success', 'panel-danger'],
+        'default' : 'panel-default'
       }
     };
   }
 
+  /**
+   * Sets default classes on the component
+   */
+  _setClasses () {
+    // add default class for this component
+    if (!this.classList.contains('panel')) {
+      this.classList.add('panel');
+    }
+
+    let hasClass = false;
+    this._classes.context.classes.forEach( (clazz) => {
+      hasClass = hasClass || this.classList.contains(clazz);
+    });
+
+    if (!hasClass) {
+      this.classList.add(this._classes.context.default);
+    }
+  }
 }
 (function () {
   document.registerElement('pf-accordion-panel', PfAccordionPanel);
