@@ -29,6 +29,7 @@ describe ("PatternFly Accordion Component Tests", function () {
     accordionHeading.appendChild(accordionHeadingToggle);
     accordionPanel.appendChild(accordionHeading);
     accordionPanel.appendChild(accordionTemplate);
+    accordion.appendChild(accordionPanel);
 
     accordionPanel2 = document.createElement('pf-accordion-panel');
     accordionPanel2.id = 'pfAccordionPanel2';
@@ -59,6 +60,36 @@ describe ("PatternFly Accordion Component Tests", function () {
   it('put the correct class for an accordion panel', function () {
     return addElementToBody(accordion).then(function () {
       expect(accordionPanel.classList.contains('panel')).toBe(true);
+    });
+  });
+
+  it('adds the default context modifier class for an accordion panel where none is supplied', function () {
+    return addElementToBody(accordion).then(function () {
+      expect(accordionPanel.classList.contains('panel-default')).toBe(true);
+    });
+  });
+
+  it('does not add the default context modifier class for an accordion panel where a value is supplied', function () {
+    accordionPanel.className = 'panel panel-warning';
+    return addElementToBody(accordion).then(function () {
+      expect(accordionPanel.classList.contains('panel-default')).toBe(false);
+    });
+  });
+
+  it('restores the default context modifier class for an accordion panel when all context modifier classes are removed', function () {
+    accordionPanel.className = 'panel panel-warning';
+    return addElementToBody(accordion).then(function () {
+      expect(accordionPanel.classList.contains('panel-default')).toBe(false);
+      accordionPanel.className = '';
+      // wait till all work by browser is done
+      return new Promise( function(resolve) {
+        requestAnimationFrame( function() {
+          console.log(accordionPanel.className);
+          expect(accordionPanel.classList.contains('panel')).toBe(true);
+          expect(accordionPanel.classList.contains('panel-default')).toBe(true);
+          resolve();
+        });
+      });
     });
   });
 
@@ -95,42 +126,74 @@ describe ("PatternFly Accordion Component Tests", function () {
   it('put the correct class on accordion toggle when accordion template is hidden', function () {
     return addElementToBody(accordion).then(function () {
       accordionTemplate.hide();
-      expect(accordionHeadingToggle.classList.contains('collapse')).toBe(true);
+
+      return new Promise(function(resolve) {
+        requestAnimationFrame( function () {
+          expect(accordionHeadingToggle.classList.contains('collapse')).toBe(true);
+          resolve();
+        });
+      });
     });
   });
 
   it('put the correct class on accordion toggle when accordion template is shown', function () {
     return addElementToBody(accordion).then(function () {
       accordionTemplate.show();
-      expect(accordionHeadingToggle.classList.contains('collapse')).toBe(true);
+
+      return new Promise(function (resolve) {
+        requestAnimationFrame( function () {
+          expect(accordionHeadingToggle.classList.contains('collapse')).toBe(true);
+          resolve();
+        });
+      });
     });
   });
 
-  it('closes other open panel when another is opened', function () {
-    accordionTemplate.state = 'shown';
-    return addElementToBody(accordion).then(function () {
-      expect(accordionTemplate.classList.contains('in')).toBe(true);
+  it('closes other open panel when another is opened', function (done) {
+    addElementToBody(accordion).then(function () {
+      accordionTemplate.state = 'shown';
+      requestAnimationFrame(function() {
+        expect(accordionTemplate.classList.contains('in')).toBe(true);
+      });
+      accordionTemplate.addEventListener('hidden.bs.collapse', function (){
+        expect(accordionTemplate.state).toBe('hidden');
+        done();
+      });
       accordionTemplate2.state = 'shown';
-      expect(accordionTemplate.classList.contains('in')).toBe(false);
-      expect(accordionTemplate.state).toBe('hidden');
     });
   });
 
   it('put the correct value in state on display change of accordion template', function () {
     return addElementToBody(accordion).then(function () {
       accordionTemplate.show();
-      expect(accordionTemplate.state).toBe('shown');
-      accordionTemplate.hide();
-      expect(accordionTemplate.state).toBe('hidden');
+
+      return new Promise(function (resolve) {
+        requestAnimationFrame( function () {
+          expect(accordionTemplate.state).toBe('shown');
+          accordionTemplate.hide();
+          requestAnimationFrame( function () {
+            expect(accordionTemplate.state).toBe('hidden');
+            resolve();
+          });
+        });
+      });
     });
   });
 
-  it('change the display state of acccordion template with state', function () {
+  it('changes the display state of acccordion template with state', function () {
     return addElementToBody(accordion).then(function () {
       accordionTemplate.state = 'shown';
-      expect(accordionTemplate.classList.contains('in')).toBe(true);
-      accordionTemplate.state = 'hidden';
-      expect(accordionTemplate.classList.contains('in')).toBe(false);
+
+      return new Promise(function (resolve) {
+        requestAnimationFrame( function() {
+          expect(accordionTemplate.classList.contains('in')).toBe(true);
+          accordionTemplate.state = 'hidden';
+          requestAnimationFrame( function() {
+            expect(accordionTemplate.classList.contains('in')).toBe(false);
+            resolve();
+          });
+        });
+      });
     });
   });
 });

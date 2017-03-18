@@ -93,7 +93,7 @@ export class PfAccordionTemplate extends HTMLElement {
       let _self = this;
 
       // this is necessary for the animation to start properly
-      window.requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         _self.classList.add('collapsing');
         _self.classList.remove('collapse');
         _self.classList.remove('in');
