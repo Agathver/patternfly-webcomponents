@@ -56,6 +56,7 @@ export class PfAccordionHeading extends HTMLElement {
       this._target.toggle();
     }
   }
+
   _handleMutations (mutations) {
     // handle mutations to toggle element
   }
