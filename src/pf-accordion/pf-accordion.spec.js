@@ -84,7 +84,6 @@ describe ("PatternFly Accordion Component Tests", function () {
       // wait till all work by browser is done
       return new Promise( function(resolve) {
         requestAnimationFrame( function() {
-          console.log(accordionPanel.className);
           expect(accordionPanel.classList.contains('panel')).toBe(true);
           expect(accordionPanel.classList.contains('panel-default')).toBe(true);
           resolve();
@@ -155,7 +154,7 @@ describe ("PatternFly Accordion Component Tests", function () {
       requestAnimationFrame(function() {
         expect(accordionTemplate.classList.contains('in')).toBe(true);
       });
-      accordionTemplate.addEventListener('hidden.bs.collapse', function (){
+      accordionTemplate.addEventListener('hidden.bs.collapse', function () {
         expect(accordionTemplate.state).toBe('hidden');
         done();
       });
@@ -180,20 +179,19 @@ describe ("PatternFly Accordion Component Tests", function () {
     });
   });
 
-  it('changes the display state of acccordion template with state', function () {
-    return addElementToBody(accordion).then(function () {
-      accordionTemplate.state = 'shown';
-
-      return new Promise(function (resolve) {
-        requestAnimationFrame( function() {
-          expect(accordionTemplate.classList.contains('in')).toBe(true);
-          accordionTemplate.state = 'hidden';
-          requestAnimationFrame( function() {
-            expect(accordionTemplate.classList.contains('in')).toBe(false);
-            resolve();
-          });
-        });
+  it('changes the display state of acccordion template with state', function (done) {
+    addElementToBody(accordion).then(function () {
+      accordionTemplate.addEventListener('shown.bs.collapse', function () {
+        expect(accordionTemplate.classList.contains('in')).toBe(true);
+        accordionTemplate.state = 'hidden';
       });
+      accordionTemplate.addEventListener('hidden.bs.collapse', function () {
+        expect(accordionTemplate.classList.contains('in')).toBe(false);
+        done();
+      });
+      accordionTemplate.state = 'shown';
+    }).catch( function() {
+      done.fail();
     });
   });
 });
