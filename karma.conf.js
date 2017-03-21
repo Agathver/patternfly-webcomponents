@@ -21,7 +21,10 @@ module.exports = function(config) {
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-lite.js',
       'node_modules/@webcomponents/custom-elements/src/native-shim.js',
       'dist/js/patternfly.js',
-      'src/**/*.spec.js'
+      'src/**/*.spec.js',
+      'dist/css/patternfly.css',
+      '/dist/css/patternfly-additions.css',
+      'dist/css/patternfly-webcomponents.css'
     ],
 
 
