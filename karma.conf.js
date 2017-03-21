@@ -20,7 +20,10 @@ module.exports = function(config) {
       'node_modules/jasmine-promises/dist/jasmine-promises.js',
       'node_modules/@webcomponents/webcomponentsjs/webcomponents-lite.js',
       'dist/js/patternfly.js',
-      'src/**/*.spec.js'
+      'src/**/*.spec.js',
+      'dist/css/patternfly.css',
+      '/dist/css/patternfly-additions.css',
+      'dist/css/patternfly-webcomponents.css'
     ],
 
 
