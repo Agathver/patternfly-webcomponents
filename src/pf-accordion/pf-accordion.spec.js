@@ -111,9 +111,15 @@ describe ("PatternFly Accordion Component Tests", function () {
     });
   });
 
+  it('recognises element with data-toggle="collapse" as the accordion toggle', function () {
+    return addElementToBody(accordion).then(function () {
+      expect(accordionHeading._toggle).toBeDefined();
+    });
+  });
+
   it('put the correct class and aria attributes for an accordion toggle', function () {
     return addElementToBody(accordion).then(function () {
-      expect(accordionHeadingToggle.classList.contains('collapse')).toBe(true);
+      expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(true);
       expect(accordionTemplate.state).toBe('hidden');
     });
   });
@@ -132,7 +138,7 @@ describe ("PatternFly Accordion Component Tests", function () {
 
       return new Promise(function(resolve) {
         requestAnimationFrame( function () {
-          expect(accordionHeadingToggle.classList.contains('collapse')).toBe(true);
+          expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(true);
           resolve();
         });
       });
@@ -145,7 +151,7 @@ describe ("PatternFly Accordion Component Tests", function () {
 
       return new Promise(function (resolve) {
         requestAnimationFrame( function () {
-          expect(accordionHeadingToggle.classList.contains('collapse')).toBe(true);
+          expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(false);
           resolve();
         });
       });
