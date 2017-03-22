@@ -2,6 +2,7 @@ import PfAccordionBody from 'pf-accordion-body.component';
 /**
  * <b>&lt;pf-accordion-template&gt;</b> element for Patternfly Web Components
  *
+ * @prop {string} state the state of the panel, 'hidden' or 'shown
  */
 export class PfAccordionTemplate extends HTMLElement {
   /**
@@ -48,6 +49,12 @@ export class PfAccordionTemplate extends HTMLElement {
     }
   }
 
+  /**
+   * Performs a collapse state change action.
+   * Compatibility function for Bootstrap collapse plugin.
+   *
+   * @param {String} state state of the panel
+   */
   collapse(state) {
     switch (state) {
       case 'show':
@@ -62,6 +69,9 @@ export class PfAccordionTemplate extends HTMLElement {
     }
   }
 
+  /**
+   * Make the panel visible
+   */
   show () {
     if (this._state !== 'shown' && !this._transitioning) {
       this._transitioning = true;
@@ -78,6 +88,9 @@ export class PfAccordionTemplate extends HTMLElement {
     }
   }
 
+  /**
+   * Hide the panel
+   */
   hide () {
     if (this._state !== 'hidden' && !this._transitioning) {
       let body = this.querySelector('pf-accordion-body');
@@ -102,6 +115,9 @@ export class PfAccordionTemplate extends HTMLElement {
     }
   }
 
+  /**
+   * Toggle the visiblity of the panel
+   */
   toggle () {
     if (this._state === 'shown') {
       this.hide();
@@ -110,6 +126,10 @@ export class PfAccordionTemplate extends HTMLElement {
     }
   }
 
+  /**
+   * Handles the transitionend event.
+   * @private
+   */
   _handleTransitionEnd () {
     if (this._transitioning) {
       this.classList.remove('collapsing');
@@ -129,10 +149,20 @@ export class PfAccordionTemplate extends HTMLElement {
     }
   }
 
+  /**
+   * Get the display state of the panel
+   *
+   * @returns {string} the display state, either 'shown' or 'hidden'
+   */
   get state() {
     return this._state;
   }
 
+  /**
+   * Set the display state of the panel
+   *
+   * @param {string} value the display state, either 'shown' or 'hidden'
+   */
   set state(value) {
     if (this._state !== value) {
       switch (value) {

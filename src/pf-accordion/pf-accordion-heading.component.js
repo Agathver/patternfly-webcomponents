@@ -6,9 +6,9 @@ export class PfAccordionHeading extends HTMLElement {
   /**
    * Called when an instance was inserted into the document
    */
-  attachedCallback () {
+  attachedCallback() {
     this.classList.add('panel-heading');
-    this.setAttribute('role','tab');
+    this.setAttribute('role', 'tab');
 
     this._target = this.parentElement.querySelector('pf-accordion-template');
     if (this._target) {
@@ -20,14 +20,13 @@ export class PfAccordionHeading extends HTMLElement {
         });
       }
     }
-
-    if (!this._observer) {
-      this._observer = new MutationObserver(this._handleMutations.bind(this));
-      this._observer.observe(this, { childList: true });
-    }
   }
 
-  _initializeToggle () {
+  /**
+   * Finds the toggle element and adds appropriate listeners to it.
+   * @private
+   */
+  _initializeToggle() {
     this._toggle = this.querySelector('*[data-toggle="collapse"]');
     this._toggleClickHandler = this._handleToggleClick.bind(this);
     this._toggle.addEventListener('click', this._toggleClickHandler);
@@ -51,14 +50,14 @@ export class PfAccordionHeading extends HTMLElement {
     }
   }
 
-  _handleToggleClick () {
+  /**
+   * Handle click event on the toggle element
+   * @private
+   */
+  _handleToggleClick() {
     if (this._target) {
       this._target.toggle();
     }
-  }
-
-  _handleMutations (mutations) {
-    // handle mutations to toggle element
   }
 }
 (function () {

@@ -22,7 +22,7 @@ module.exports = function(config) {
       'dist/js/patternfly.js',
       'src/**/*.spec.js',
       'dist/css/patternfly.css',
-      '/dist/css/patternfly-additions.css',
+      'dist/css/patternfly-additions.css',
       'dist/css/patternfly-webcomponents.css'
     ],
 
