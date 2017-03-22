@@ -21,7 +21,7 @@ export class PfAccordionPanel extends HTMLElement {
 
   /**
    * Returns a list of attributes on which we are interested to track changes
-   * @returns {[string]}
+   * @returns {String[]}
    */
   static get observedAttributes () {
     return ['open', 'class'];
@@ -47,6 +47,7 @@ export class PfAccordionPanel extends HTMLElement {
 
   /**
    * Sets default constants
+   * @private
    */
   _initDefaults () {
     this._classes = {
@@ -59,6 +60,7 @@ export class PfAccordionPanel extends HTMLElement {
 
   /**
    * Sets default classes on the component
+   * @private
    */
   _setClasses () {
     // add default class for this component

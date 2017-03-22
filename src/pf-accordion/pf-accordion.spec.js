@@ -1,14 +1,18 @@
-describe ("PatternFly Accordion Component Tests", function () {
+describe("PatternFly Accordion Component Tests", function () {
   var accordion, accordionPanel, accordionHeading, accordionTemplate, accordionHeadingToggle,
     accordionPanel2, accordionHeading2, accordionTemplate2, accordionHeadingToggle2;
 
-  function addElementToBody (element) {
+  function addElementToBody(element) {
     var promise = new Promise(function (resolve) {
       var observer = new MutationObserver(function () {
         resolve();
         observer.disconnect();
       });
-      var config = { attributes: true, childList: true, characterData: true };
+      var config = {
+        attributes: true,
+        childList: true,
+        characterData: true
+      };
       observer.observe(element, config);
     });
     document.body.appendChild(element);
@@ -16,7 +20,7 @@ describe ("PatternFly Accordion Component Tests", function () {
   }
 
   beforeEach(function () {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
     accordion = document.createElement('pf-accordion');
     accordion.id = 'pfAccordion';
     accordionPanel = document.createElement('pf-accordion-panel');
@@ -28,7 +32,7 @@ describe ("PatternFly Accordion Component Tests", function () {
 
     accordionHeading.id = 'pfAccordionTemplate';
     accordionHeadingToggle = document.createElement('a');
-    accordionHeadingToggle.setAttribute('data-toggle','collapse');
+    accordionHeadingToggle.setAttribute('data-toggle', 'collapse');
     accordionHeading.appendChild(accordionHeadingToggle);
     accordionPanel.appendChild(accordionHeading);
     accordionPanel.appendChild(accordionTemplate);
@@ -42,7 +46,7 @@ describe ("PatternFly Accordion Component Tests", function () {
     accordionTemplate2.innerHTML = '<pf-accordion-body>Collapse CONTENT 2</pf-accordion-body>';
     accordionTemplate2.id = 'pfAccordionTemplate2';
     accordionHeadingToggle2 = document.createElement('a');
-    accordionHeadingToggle2.setAttribute('data-toggle','collapse');
+    accordionHeadingToggle2.setAttribute('data-toggle', 'collapse');
     accordionHeading2.appendChild(accordionHeadingToggle2);
     accordionPanel2.appendChild(accordionHeading2);
     accordionPanel2.appendChild(accordionTemplate2);
@@ -86,8 +90,8 @@ describe ("PatternFly Accordion Component Tests", function () {
       expect(accordionPanel.classList.contains('panel-default')).toBe(false);
       accordionPanel.className = '';
       // wait till all work by browser is done
-      return new Promise( function(resolve) {
-        requestAnimationFrame( function() {
+      return new Promise(function (resolve) {
+        requestAnimationFrame(function () {
           expect(accordionPanel.classList.contains('panel')).toBe(true);
           expect(accordionPanel.classList.contains('panel-default')).toBe(true);
           resolve();
@@ -136,8 +140,8 @@ describe ("PatternFly Accordion Component Tests", function () {
     return addElementToBody(accordion).then(function () {
       accordionTemplate.hide();
 
-      return new Promise(function(resolve) {
-        requestAnimationFrame( function () {
+      return new Promise(function (resolve) {
+        requestAnimationFrame(function () {
           expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(true);
           resolve();
         });
@@ -150,7 +154,7 @@ describe ("PatternFly Accordion Component Tests", function () {
       accordionTemplate.show();
 
       return new Promise(function (resolve) {
-        requestAnimationFrame( function () {
+        requestAnimationFrame(function () {
           expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(false);
           resolve();
         });
@@ -173,10 +177,10 @@ describe ("PatternFly Accordion Component Tests", function () {
       accordionTemplate.show();
 
       return new Promise(function (resolve) {
-        setTimeout( function () {
+        setTimeout(function () {
           expect(accordionTemplate.state).toBe('shown');
           accordionTemplate.hide();
-          setTimeout( function () {
+          setTimeout(function () {
             expect(accordionTemplate.state).toBe('hidden');
             resolve();
           }, 1000);
@@ -191,7 +195,7 @@ describe ("PatternFly Accordion Component Tests", function () {
         expect(accordionTemplate.classList.contains('in')).toBe(true);
 
         // wait for transitioning to complete
-        requestAnimationFrame( function() {
+        requestAnimationFrame(function () {
           accordionTemplate.state = 'hidden';
         });
       });
@@ -201,7 +205,7 @@ describe ("PatternFly Accordion Component Tests", function () {
         done();
       });
       accordionTemplate.state = 'shown';
-    }).catch( function() {
+    }).catch(function () {
       done.fail();
     });
   });

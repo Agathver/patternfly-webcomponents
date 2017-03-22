@@ -3,6 +3,38 @@ import PfAccordionPanel from 'pf-accordion-panel.component';
 /**
  * <b>&lt;pf-accordion&gt;</b> element for Patternfly Web Components
  *
+ * @example {@lang xml}
+ * <pf-accordion>
+ *   <pf-accordion-panel>
+ *     <pf-accordion-heading>
+ *       <h4 class="panel-title">
+ *         <a role="button" data-toggle="collapse" href="#">
+ *           Collapsible Group Item #1
+ *         </a>
+ *       </h4>
+ *     </pf-accordion-heading>
+ *     <pf-accordion-template open>
+ *       <pf-accordion-body>
+ *         Collapse CONTENT 1
+ *       </pf-accordion-body>
+ *     </pf-accordion-template>
+ *   </pf-accordion-panel>
+ *   <pf-accordion-panel class="panel panel-primary">
+ *     <pf-accordion-heading>
+ *       <h4 class="panel-title">
+ *         <a role="button" data-toggle="collapse" href="#">
+ *           Collapsible Group Item #2
+ *         </a>
+ *       </h4>
+ *     </pf-accordion-heading>
+ *     <pf-accordion-template>
+ *       <pf-accordion-body>
+ *         Collapse CONTENT 2
+ *       </pf-accordion-body>
+ *     </pf-accordion-template>
+ *   </pf-accordion-panel>
+ * </pf-accordion>
+ *
  */
 export class PfAccordion extends HTMLElement {
   /**
@@ -77,6 +109,11 @@ export class PfAccordion extends HTMLElement {
     this._obeserver.observe(this, { childList: true });
   }
 
+  /**
+   * Handle bubbled hide.bs.collapse on accordion
+   * @param {Event} e event
+   * @private
+   */
   _handlePanelHidden (e) {
     let index = this._openPanels.indexOf(e.target);
     if (index > -1) {
@@ -84,6 +121,11 @@ export class PfAccordion extends HTMLElement {
     }
   }
 
+  /**
+   * Handle bubbled show.bs.collapse on accordion
+   * @param {Event} e event
+   * @private
+   */
   _handlePanelShown (e) {
     let panel;
     while ((panel = this._openPanels.shift())) {
