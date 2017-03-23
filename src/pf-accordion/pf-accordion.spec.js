@@ -29,8 +29,17 @@ describe("PatternFly Accordion Component Tests", function () {
     accordionHeading.id = 'pfAccordionHeading';
     accordionTemplate = document.createElement('pf-accordion-template');
     accordionTemplate.innerHTML = '<pf-accordion-body>Collapse CONTENT 1</pf-accordion-body>';
+    accordionTemplate.id = 'pfAccordionTemplate';
+    // manually trigger 'ontransitionend' for tests in absence of css
+    accordionTemplate.addEventListener('show.bs.collapse', function () {
+      accordionTemplate._handleTransitionEnd();
+    });
 
-    accordionHeading.id = 'pfAccordionTemplate';
+    accordionTemplate.addEventListener('hide.bs.collapse', function () {
+      accordionTemplate._handleTransitionEnd();
+    });
+
+
     accordionHeadingToggle = document.createElement('a');
     accordionHeadingToggle.setAttribute('data-toggle', 'collapse');
     accordionHeading.appendChild(accordionHeadingToggle);
@@ -45,6 +54,15 @@ describe("PatternFly Accordion Component Tests", function () {
     accordionTemplate2 = document.createElement('pf-accordion-template');
     accordionTemplate2.innerHTML = '<pf-accordion-body>Collapse CONTENT 2</pf-accordion-body>';
     accordionTemplate2.id = 'pfAccordionTemplate2';
+
+    // manually trigger 'ontransitionend' for tests in absence of css
+    accordionTemplate2.addEventListener('show.bs.collapse', function () {
+      accordionTemplate2._handleTransitionEnd();
+    });
+
+    accordionTemplate2.addEventListener('hide.bs.collapse', function () {
+      accordionTemplate2._handleTransitionEnd();
+    });
     accordionHeadingToggle2 = document.createElement('a');
     accordionHeadingToggle2.setAttribute('data-toggle', 'collapse');
     accordionHeading2.appendChild(accordionHeadingToggle2);
