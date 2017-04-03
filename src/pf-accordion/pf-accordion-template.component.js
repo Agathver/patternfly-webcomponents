@@ -44,7 +44,7 @@ export class PfAccordionTemplate extends HTMLElement {
    * @param {string} newValue The new attribute value
    */
   attributeChangedCallback (attrName, oldValue, newValue) {
-    if (attrName === "open") {
+    if (attrName === 'open') {
       this.state = this.hasAttribute('open') ? 'shown' : 'hidden';
     }
   }

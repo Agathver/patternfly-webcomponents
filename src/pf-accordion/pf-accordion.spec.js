@@ -1,4 +1,4 @@
-describe("PatternFly Accordion Component Tests", function () {
+describe('PatternFly Accordion Component Tests', function () {
   var accordion, accordionPanel, accordionHeading, accordionTemplate, accordionHeadingToggle,
     accordionPanel2, accordionHeading2, accordionTemplate2, accordionHeadingToggle2;
 
@@ -30,6 +30,7 @@ describe("PatternFly Accordion Component Tests", function () {
     accordionTemplate = document.createElement('pf-accordion-template');
     accordionTemplate.innerHTML = '<pf-accordion-body>Collapse CONTENT 1</pf-accordion-body>';
     accordionTemplate.id = 'pfAccordionTemplate';
+
     // manually trigger 'ontransitionend' for tests in absence of css
     accordionTemplate.addEventListener('show.bs.collapse', function () {
       accordionTemplate._handleTransitionEnd();
@@ -38,7 +39,6 @@ describe("PatternFly Accordion Component Tests", function () {
     accordionTemplate.addEventListener('hide.bs.collapse', function () {
       accordionTemplate._handleTransitionEnd();
     });
-
 
     accordionHeadingToggle = document.createElement('a');
     accordionHeadingToggle.setAttribute('data-toggle', 'collapse');
@@ -224,6 +224,18 @@ describe("PatternFly Accordion Component Tests", function () {
       });
       accordionTemplate.state = 'shown';
     }).catch(function () {
+      done.fail();
+    });
+  });
+
+  it('sets height for all panels when fixed-height component is enabled', function (done) {
+    accordion.setAttribute('fixedheight', 'fixedheight');
+    accordion.addEventListener('initialized', function () {
+      expect(accordionTemplate.style.maxHeight).not.toBe('');
+      expect(accordionTemplate2.style.maxHeight).not.toBe('');
+      done();
+    });
+    addElementToBody(accordion).catch(function () {
       done.fail();
     });
   });
