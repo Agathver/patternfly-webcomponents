@@ -54,7 +54,8 @@ export class PfAccordionHeading extends HTMLElement {
    * Handle click event on the toggle element
    * @private
    */
-  _handleToggleClick() {
+  _handleToggleClick(event) {
+    event.preventDefault();
     if (this._target) {
       this._target.toggle();
     }
