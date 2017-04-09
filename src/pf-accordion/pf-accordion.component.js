@@ -42,6 +42,7 @@ export class PfAccordion extends HTMLElement {
    */
   createdCallback () {
     this._openPanels = [];
+    this._fixedHeight = false;
   }
 
   /**
@@ -110,7 +111,7 @@ export class PfAccordion extends HTMLElement {
 
     if (this.hasAttribute('fixedheight')) {
       // _initialized is raised after _initCollapseHeights
-      this._initCollapseHeights();
+      this._initFixedHeight();
     } else {
       this._initialized = true;
       this.dispatchEvent(new Event('initialized'));
@@ -160,15 +161,18 @@ export class PfAccordion extends HTMLElement {
   attributeChangedCallback (attrName, oldValue, newValue) {
     if (attrName === 'fixedheight') {
       if (newValue) {
-        this._initCollapseHeights();
+        this._initFixedHeight();
+      } else {
+        this._unsetFixedHeight();
       }
     }
   }
 
   /**
-  * Recalculates abd sets the collapse height after every browser resize
+  * Recalculates and sets the collapse height after every browser resize
+  * @private
   */
-  _setCollapseHeights () {
+  _setFixedHeight () {
     let overflowY = 'hidden';
 
     let height = this.clientHeight;
@@ -202,14 +206,25 @@ export class PfAccordion extends HTMLElement {
       openPanel.classList.add('in');
     });
 
+    // run as requestAnimationFrame to prevent performance issues while resizing
     requestAnimationFrame( () => {
     // Set the max-height for the collapse panels
       let panels = this.getElementsByTagName('pf-accordion-template');
       Array.prototype.forEach.call(panels,(element) => {
         // Set the max-height and vertical scroll of the scroll element
+        if (!element._oldStyle) {
+          element._oldStyle = {
+            maxHeight: element.style.maxHeight,
+            overflowY: element.style.overflowY
+          };
+        }
         element.style.maxHeight = bodyHeight + 'px';
         element.style.overflowY = 'auto';
       });
+
+      this._oldStyle = {
+        overflowY: this.style.overflowY
+      };
       this.style.overflowY =  overflowY;
 
       if (!this._initialized) {
@@ -221,12 +236,54 @@ export class PfAccordion extends HTMLElement {
   }
 
   /**
-   * initializes a fixed-width accordion
+   * @private
    */
-  _initCollapseHeights () {
-    this._setCollapseHeights();
+  _unsetFixedHeight () {
+    if (!this._fixedHeight) {
+      return;
+    }
+    let panels = this.getElementsByTagName('pf-accordion-template');
+    Array.prototype.forEach.call(panels,(element) => {
+      // Set the max-height and vertical scroll of the scroll element
+      if (element._oldStyle) {
+        element.style.maxHeight = element._oldStyle.maxHeight;
+        element.style.overflowY = element._oldStyle.overflowY;
+        element._oldStyle = null;
+      }
+    });
+    this.style.overflowY =  this._oldStyle.overflowY;
+    this._oldStyle = null;
+    window.removeEventListener('resize', this._fixedHeihtListener);
+    this._fixedHeight = false;
+  }
+
+  /**
+   * initializes a fixed-width accordion
+   * @private
+   */
+  _initFixedHeight () {
+    if (this._fixedHeight) {
+      return;
+    }
+    this._setFixedHeight();
     // Update on window resizing
-    window.addEventListener('resize', this._setCollapseHeights.bind(this));
+    this._fixedHeihtListener = this._setFixedHeight.bind(this);
+    window.addEventListener('resize', this._fixedHeihtListener);
+    this._fixedHeight = true;
+  }
+
+  get fixedHeight () {
+    return this._fixedHeight;
+  }
+
+  set fixedHeight (value) {
+    if (value) {
+      if (!this.hasAttribute('fixedheight')) {
+        this.setAttribute('fixedheight', '');
+      }
+    } else {
+      this.removeAttribute('fixedheight');
+    }
   }
 }
 
