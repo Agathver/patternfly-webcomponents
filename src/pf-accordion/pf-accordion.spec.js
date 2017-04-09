@@ -89,35 +89,6 @@ describe('PatternFly Accordion Component Tests', function () {
     });
   });
 
-  it('adds the default context modifier class for an accordion panel where none is supplied', function () {
-    return addElementToBody(accordion).then(function () {
-      expect(accordionPanel.classList.contains('panel-default')).toBe(true);
-    });
-  });
-
-  it('does not add the default context modifier class for an accordion panel where a value is supplied', function () {
-    accordionPanel.className = 'panel panel-warning';
-    return addElementToBody(accordion).then(function () {
-      expect(accordionPanel.classList.contains('panel-default')).toBe(false);
-    });
-  });
-
-  it('restores the default context modifier class for an accordion panel when all context modifier classes are removed', function () {
-    accordionPanel.className = 'panel panel-warning';
-    return addElementToBody(accordion).then(function () {
-      expect(accordionPanel.classList.contains('panel-default')).toBe(false);
-      accordionPanel.className = '';
-      // wait till all work by browser is done
-      return new Promise(function (resolve) {
-        requestAnimationFrame(function () {
-          expect(accordionPanel.classList.contains('panel')).toBe(true);
-          expect(accordionPanel.classList.contains('panel-default')).toBe(true);
-          resolve();
-        });
-      });
-    });
-  });
-
   it('put the correct class and aria attributes for an accordion heading', function () {
     return addElementToBody(accordion).then(function () {
       expect(accordionHeading.classList.contains('panel-heading')).toBe(true);
@@ -133,7 +104,7 @@ describe('PatternFly Accordion Component Tests', function () {
     });
   });
 
-  it('recognises element with data-toggle="collapse" as the accordion toggle', function () {
+  it('recognizes element with data-toggle="collapse" as the accordion toggle', function () {
     return addElementToBody(accordion).then(function () {
       expect(accordionHeading._toggle).toBeDefined();
     });
@@ -228,15 +199,56 @@ describe('PatternFly Accordion Component Tests', function () {
     });
   });
 
-  it('sets height for all panels when fixed-height component is enabled', function (done) {
+  it('adds the default context modifier class for an accordion panel where none is supplied', function () {
+    return addElementToBody(accordion).then(function () {
+      expect(accordionPanel.classList.contains('panel-default')).toBe(true);
+    });
+  });
+
+  it('does not add the default context modifier class for an accordion panel where a value is supplied', function () {
+    accordionPanel.className = 'panel panel-warning';
+    return addElementToBody(accordion).then(function () {
+      expect(accordionPanel.classList.contains('panel-default')).toBe(false);
+    });
+  });
+
+  it('restores the default context modifier class for an accordion panel when all context modifier classes are removed', function () {
+    accordionPanel.className = 'panel panel-warning';
+    return addElementToBody(accordion).then(function () {
+      expect(accordionPanel.classList.contains('panel-default')).toBe(false);
+      accordionPanel.className = '';
+      // wait till all work by browser is done
+      return new Promise(function (resolve) {
+        requestAnimationFrame(function () {
+          expect(accordionPanel.classList.contains('panel')).toBe(true);
+          expect(accordionPanel.classList.contains('panel-default')).toBe(true);
+          resolve();
+        });
+      });
+    });
+  });
+
+  it('sets css styles for all panels when fixed-height component is enabled', function (done) {
     accordion.setAttribute('fixedheight', 'fixedheight');
     accordion.addEventListener('initialized', function () {
       expect(accordionTemplate.style.maxHeight).not.toBe('');
       expect(accordionTemplate2.style.maxHeight).not.toBe('');
+      expect(accordionTemplate.style.overflowY).not.toBe('');
+      expect(accordionTemplate2.style.overflowY).not.toBe('');
       done();
     });
     addElementToBody(accordion).catch(function () {
       done.fail();
+    });
+  });
+
+  it('restores height of all panels when fixed-height is disabled', function () {
+    return addElementToBody(accordion).then(function () {
+      accordion.fixedHeight = false;
+      expect(accordionTemplate.style.maxHeight).toBe('');
+      expect(accordionTemplate2.style.maxHeight).toBe('');
+      expect(accordionTemplate.style.overflowY).toBe('');
+      expect(accordionTemplate2.style.overflowY).toBe('');
     });
   });
 });
