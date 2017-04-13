@@ -15,7 +15,7 @@ export class PfAccordionHeading extends HTMLElement {
       if (this._target._initialized) {
         this._initializeToggle();
       } else {
-        this._target.addEventListener('initialized', () => {
+        this._target.addEventListener('pf-accordion-initialized', () => {
           this._initializeToggle();
         });
       }
@@ -39,11 +39,11 @@ export class PfAccordionHeading extends HTMLElement {
         this._toggle.classList.add('collapsed');
         this._toggle.setAttribute('aria-expanded', 'false');
       }
-      this._target.addEventListener('show.bs.collapse', () => {
+      this._target.addEventListener('pf-accordion-expanding', () => {
         this._toggle.classList.remove('collapsed');
         this._toggle.setAttribute('aria-expanded', 'true');
       });
-      this._target.addEventListener('hide.bs.collapse', () => {
+      this._target.addEventListener('pf-accordion-collapsing', () => {
         this._toggle.classList.add('collapsed');
         this._toggle.setAttribute('aria-expanded', 'false');
       });
