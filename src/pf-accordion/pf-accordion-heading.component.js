@@ -28,11 +28,11 @@ export class PfAccordionHeading extends HTMLElement {
    */
   _initializeToggle() {
     this._toggle = this.querySelector('*[data-toggle="collapse"]');
-    this._toggleClickHandler = this._handleToggleClick.bind(this);
-    this._toggle.addEventListener('click', this._toggleClickHandler);
+    this._toggle.addEventListener('click', this._handleToggleClick.bind(this));
+    this._toggle.addEventListener('keyup', this._handleToggleKeyUp.bind(this));
 
     if (this._target !== null) {
-      if (this._target.state === 'shown') {
+      if (this._target.open) {
         this._toggle.classList.remove('collapsed');
         this._toggle.setAttribute('aria-expanded', 'true');
       } else {
@@ -51,14 +51,33 @@ export class PfAccordionHeading extends HTMLElement {
   }
 
   /**
-   * Handle click event on the toggle element
+   * Toggle the target
+   * @private
+   */
+  _doToggle() {
+    if (this._target) {
+      this._target.toggle();
+    }
+  }
+
+  /**
+   * Handle keyUp on the toggle element
+   * @private
+   */
+  _handleToggleKeyUp(event) {
+    event.preventDefault();
+    if (event.keyCode === 32) {
+      this._doToggle();
+    }
+  }
+
+  /**
+   * Handle keyUp on the toggle element
    * @private
    */
   _handleToggleClick(event) {
     event.preventDefault();
-    if (this._target) {
-      this._target.toggle();
-    }
+    this._doToggle();
   }
 }
 (function () {

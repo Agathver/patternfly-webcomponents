@@ -8,14 +8,14 @@ export class PfAccordionPanel extends HTMLElement {
   /**
    * Called when an instance of the element is created
    */
-  createdCallback () {
+  createdCallback() {
     this._initDefaults();
   }
 
   /**
    * Called when an instance of the element was inserted into the document
    */
-  attachedCallback () {
+  attachedCallback() {
     this._setClasses();
   }
 
@@ -23,8 +23,8 @@ export class PfAccordionPanel extends HTMLElement {
    * Returns a list of attributes on which we are interested to track changes
    * @returns {String[]}
    */
-  static get observedAttributes () {
-    return ['open', 'class'];
+  static get observedAttributes() {
+    return ['class'];
   }
 
   /**
@@ -34,14 +34,9 @@ export class PfAccordionPanel extends HTMLElement {
    * @param {string} oldValue The old attribute value
    * @param {string} newValue The new attribute value
    */
-  attributeChangedCallback (attrName, oldValue, newValue) {
-    switch (attrName) {
-      case 'open':
-        this.state = this.hasAttribute('open') ? 'shown' : 'hidden';
-        break;
-      case 'class':
-        this._setClasses();
-        break;
+  attributeChangedCallback(attrName, oldValue, newValue) {
+    if ('class' === attrName) {
+      this._setClasses();
     }
   }
 
@@ -49,11 +44,11 @@ export class PfAccordionPanel extends HTMLElement {
    * Sets default constants
    * @private
    */
-  _initDefaults () {
+  _initDefaults() {
     this._classes = {
-      'context' : {
-        'classes' : ['panel-default', 'panel-primary', 'panel-warning', 'panel-success', 'panel-danger'],
-        'default' : 'panel-default'
+      'context': {
+        'classes': ['panel-default', 'panel-primary', 'panel-warning', 'panel-success', 'panel-danger'],
+        'default': 'panel-default'
       }
     };
   }
@@ -62,14 +57,14 @@ export class PfAccordionPanel extends HTMLElement {
    * Sets default classes on the component
    * @private
    */
-  _setClasses () {
+  _setClasses() {
     // add default class for this component
     if (!this.classList.contains('panel')) {
       this.classList.add('panel');
     }
 
     let hasClass = false;
-    this._classes.context.classes.forEach( (clazz) => {
+    this._classes.context.classes.forEach((clazz) => {
       hasClass = hasClass || this.classList.contains(clazz);
     });
 
