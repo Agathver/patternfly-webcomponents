@@ -2,27 +2,34 @@ import PfAccordionBody from 'pf-accordion-body.component';
 /**
  * <b>&lt;pf-accordion-template&gt;</b> element for Patternfly Web Components
  *
- * @prop {string} state the state of the panel, 'hidden' or 'shown
+ * @prop {boolean} open indicates if accordion is expanded
  */
 export class PfAccordionTemplate extends HTMLElement {
+
+  /**
+   * Returns a list of attributes on which we are interested to track changes
+   * @returns {String[]}
+   */
+  static get observedAttributes() {
+    return ['open'];
+  }
+
   /**
    * Called when an instance was inserted into the document
    */
-  attachedCallback () {
+  attachedCallback() {
     this.classList.add('panel-collapse');
     this.classList.add('collapse');
     this.setAttribute('role', 'tabpanel');
 
+    // attach this as early as possible before fiddling with state attributes
+    this.addEventListener('transitionend', this._handleTransitionEnd);
+
     if (this.hasAttribute('open')) {
-      this._state = 'shown';
       this.classList.add('in');
     } else if (this.classList.contains('in')) {
-      this._state = 'shown';
-      this.setAttribute('open','');
-    } else {
-      this._state = 'hidden';
+      this.setAttribute('open', '');
     }
-    this.addEventListener('transitionend', this._handleTransitionEnd);
 
     this._initialized = true;
     this.dispatchEvent(new Event('initialized'));
@@ -31,9 +38,9 @@ export class PfAccordionTemplate extends HTMLElement {
   /**
    * Called when an instance of the element is created
    */
-  createdCallback () {
+  createdCallback() {
     this._initialized = false;
-    this._transitioning = false;
+    this._oldStyle = {};
   }
 
   /**
@@ -43,9 +50,13 @@ export class PfAccordionTemplate extends HTMLElement {
    * @param {string} oldValue The old attribute value
    * @param {string} newValue The new attribute value
    */
-  attributeChangedCallback (attrName, oldValue, newValue) {
+  attributeChangedCallback(attrName, oldValue, newValue) {
     if (attrName === 'open') {
-      this.state = this.hasAttribute('open') ? 'shown' : 'hidden';
+      if (this.hasAttribute('open')) {
+        this._expand();
+      } else {
+        this._collapse();
+      }
     }
   }
 
@@ -58,10 +69,10 @@ export class PfAccordionTemplate extends HTMLElement {
   collapse(state) {
     switch (state) {
       case 'show':
-        this.show();
+        this.open = true;
         break;
       case 'hide':
-        this.hide();
+        this.open = false;
         break;
       case 'toggle':
         this.toggle();
@@ -72,81 +83,78 @@ export class PfAccordionTemplate extends HTMLElement {
   /**
    * Make the panel visible
    */
-  show () {
-    if (this._state !== 'shown' && !this._transitioning) {
-      this._transitioning = true;
-      this.dispatchEvent(new CustomEvent('show.bs.collapse', {
-        bubbles: true,
-        cancelable: false
-      }));
-      this._state = 'shown';
-      this.classList.remove('collapse');
-      this.classList.add('collapsing');
-      let body = this.querySelector('pf-accordion-body');
-      let maxHeight = body ? body.clientHeight : 0;
-      this.style.height = maxHeight + 'px';
+  _expand() {
+    if (this._transitioning) {
+      return;
     }
+    this._transitioning = true;
+
+    this._oldStyle.height = this.style.height;
+
+    this.classList.remove('collapse');
+    this.style.height = '0px';
+    this.classList.add('collapsing');
+    let body = this.querySelector('pf-accordion-body');
+    let maxHeight = body ? body.clientHeight : 0;
+    this.style.height = maxHeight + 'px';
+
+    this.dispatchEvent(new CustomEvent('show.bs.collapse', {
+      bubbles: true,
+      cancelable: false
+    }));
   }
 
   /**
    * Hide the panel
    */
-  hide () {
-    if (this._state !== 'hidden' && !this._transitioning) {
-      let body = this.querySelector('pf-accordion-body');
-      let maxHeight = body ? body.clientHeight : 0;
-      this._transitioning = true;
-      this.dispatchEvent(new CustomEvent('hide.bs.collapse', {
-        bubbles: true,
-        cancelable: false
-      }));
-      this._state = 'hidden';
-      this.style.height = maxHeight + 'px';
-
-      let _self = this;
-
-      // this is necessary for the animation to start properly
-      requestAnimationFrame(() => {
-        _self.classList.add('collapsing');
-        _self.classList.remove('collapse');
-        _self.classList.remove('in');
-        _self.style.height = '0px';
-      });
+  _collapse() {
+    if (this._transitioning) {
+      return;
     }
+    this._transitioning = true;
+    let body = this.querySelector('pf-accordion-body');
+    let maxHeight = body ? body.clientHeight : 0;
+
+    this._oldStyle.height = this.style.height;
+    this.style.height = maxHeight + 'px';
+
+    this.classList.add('collapsing');
+    this.classList.remove('collapse');
+    this.classList.remove('in');
+    this.style.height = '0px';
+
+    this.dispatchEvent(new CustomEvent('hide.bs.collapse', {
+      bubbles: true,
+      cancelable: false
+    }));
   }
 
   /**
    * Toggle the visiblity of the panel
    */
-  toggle () {
-    if (this._state === 'shown') {
-      this.hide();
-    } else {
-      this.show();
-    }
+  toggle() {
+    this.open = !this.open;
   }
 
   /**
    * Handles the transitionend event.
    * @private
    */
-  _handleTransitionEnd () {
-    if (this._transitioning) {
-      this.classList.remove('collapsing');
-      this.classList.add('collapse');
-      if (this._state === 'shown') {
-        this.classList.add('in');
-        this.dispatchEvent(new CustomEvent('shown.bs.collapse', {
-          bubbles: true
-        }));
-      } else {
-        this.dispatchEvent(new CustomEvent('hidden.bs.collapse', {
-          bubbles: true
-        }));
-      }
-      this.style.height = '';
-      this._transitioning = false;
+  _handleTransitionEnd() {
+    this.classList.remove('collapsing');
+    this.classList.add('collapse');
+    if (this.open) {
+      this.classList.add('in');
+      this.dispatchEvent(new CustomEvent('shown.bs.collapse', {
+        bubbles: true
+      }));
+    } else {
+      this.dispatchEvent(new CustomEvent('hidden.bs.collapse', {
+        bubbles: true
+      }));
     }
+    this.style.height = this._oldStyle.height;
+    this._transitioning = false;
   }
 
   /**
@@ -154,8 +162,8 @@ export class PfAccordionTemplate extends HTMLElement {
    *
    * @returns {string} the display state, either 'shown' or 'hidden'
    */
-  get state() {
-    return this._state;
+  get open() {
+    return this.hasAttribute('open');
   }
 
   /**
@@ -163,19 +171,15 @@ export class PfAccordionTemplate extends HTMLElement {
    *
    * @param {string} value the display state, either 'shown' or 'hidden'
    */
-  set state(value) {
-    if (this._state !== value) {
-      switch (value) {
-        case 'shown':
-          this.show();
-          break;
-        case 'hidden':
-          this.hide();
-          break;
-      }
+  set open(value) {
+    if (value) {
+      this.setAttribute('open', '');
+    } else {
+      this.removeAttribute('open');
     }
   }
 }
+
 (function () {
   document.registerElement('pf-accordion-template', PfAccordionTemplate);
 }());

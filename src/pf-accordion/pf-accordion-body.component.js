@@ -6,7 +6,7 @@ export class PfAccordionBody extends HTMLElement {
   /**
    * Called when an instance was inserted into the document
    */
-  attachedCallback () {
+  attachedCallback() {
     this.classList.add('panel-body');
   }
 }

@@ -113,21 +113,23 @@ describe('PatternFly Accordion Component Tests', function () {
   it('put the correct class and aria attributes for an accordion toggle', function () {
     return addElementToBody(accordion).then(function () {
       expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(true);
-      expect(accordionTemplate.state).toBe('hidden');
+      expect(accordionTemplate.open).toBe(false);
     });
   });
 
-  it('put the correct class and aria attributes for an accordion template when it has open attribute', function () {
+  it('put the correct class and aria attributes for an accordion template when it has open attribute', function (done) {
     accordionTemplate.setAttribute('open', '');
-    return addElementToBody(accordion).then(function () {
+    accordionTemplate.addEventListener('initialized', function () {
       expect(accordionTemplate.classList.contains('in')).toBe(true);
-      expect(accordionTemplate.state).toBe('shown');
+      expect(accordionTemplate.open).toBe(true);
+      done();
     });
+    addElementToBody(accordion);
   });
 
   it('put the correct class on accordion toggle when accordion template is hidden', function () {
     return addElementToBody(accordion).then(function () {
-      accordionTemplate.hide();
+      accordionTemplate.open = false;
 
       return new Promise(function (resolve) {
         requestAnimationFrame(function () {
@@ -140,7 +142,7 @@ describe('PatternFly Accordion Component Tests', function () {
 
   it('put the correct class on accordion toggle when accordion template is shown', function () {
     return addElementToBody(accordion).then(function () {
-      accordionTemplate.show();
+      accordionTemplate.open = true;
 
       return new Promise(function (resolve) {
         requestAnimationFrame(function () {
@@ -152,25 +154,23 @@ describe('PatternFly Accordion Component Tests', function () {
   });
 
   it('closes other open panel when another is opened', function () {
-    accordionTemplate.setAttribute('open', '');
-    spyOn(accordionTemplate, 'hide');
+    accordionTemplate.open = true;
     return addElementToBody(accordion).then(function () {
-      expect(accordionTemplate.state).toBe('shown');
-      accordionTemplate2.state = 'shown';
-      expect(accordionTemplate.hide).toHaveBeenCalled();
+      accordionTemplate2.open = true;
+      expect(accordionTemplate.open).toBe(false);
     });
   });
 
-  it('put the correct value in state on display change of accordion template', function () {
+  it('put the correct value in open on display change of accordion template', function () {
     return addElementToBody(accordion).then(function () {
-      accordionTemplate.show();
+      accordionTemplate.open = true;
 
       return new Promise(function (resolve) {
         setTimeout(function () {
-          expect(accordionTemplate.state).toBe('shown');
-          accordionTemplate.hide();
+          expect(accordionTemplate.open).toBe(true);
+          accordionTemplate.open = false;
           setTimeout(function () {
-            expect(accordionTemplate.state).toBe('hidden');
+            expect(accordionTemplate.open).toBe(false);
             resolve();
           }, 1000);
         }, 1000);
@@ -178,22 +178,24 @@ describe('PatternFly Accordion Component Tests', function () {
     });
   });
 
-  it('changes the display state of acccordion template with state', function (done) {
+  it('changes the display state of acccordion template with open', function (done) {
     addElementToBody(accordion).then(function () {
       accordionTemplate.addEventListener('shown.bs.collapse', function () {
         expect(accordionTemplate.classList.contains('in')).toBe(true);
 
         // wait for transitioning to complete
         requestAnimationFrame(function () {
-          accordionTemplate.state = 'hidden';
+          accordionTemplate.open = false;
         });
       });
 
       accordionTemplate.addEventListener('hidden.bs.collapse', function () {
-        expect(accordionTemplate.classList.contains('in')).toBe(false);
-        done();
+        requestAnimationFrame(function () {
+          expect(accordionTemplate.classList.contains('in')).toBe(false);
+          done();
+        });
       });
-      accordionTemplate.state = 'shown';
+      accordionTemplate.open = true;
     }).catch(function () {
       done.fail();
     });
