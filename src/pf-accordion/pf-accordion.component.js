@@ -1,4 +1,8 @@
 import PfAccordionPanel from 'pf-accordion-panel.component';
+import PfAccordionTemplate from 'pf-accordion-template.component';
+import {
+  pfUtil
+} from 'pf-utils';
 
 /**
  * <b>&lt;pf-accordion&gt;</b> element for Patternfly Web Components
@@ -40,7 +44,7 @@ export class PfAccordion extends HTMLElement {
   /**
    * Called when an instance of the element is created
    */
-  createdCallback () {
+  createdCallback() {
     this._openPanels = [];
     this._fixedHeight = false;
   }
@@ -48,45 +52,32 @@ export class PfAccordion extends HTMLElement {
   /**
    * Called when an instance was inserted into the document
    */
-  attachedCallback () {
+  attachedCallback() {
     this.classList.add('panel-group');
     this.setAttribute('role', 'tablist');
-    this.setAttribute('aria-multiselectable','true');
+    this.setAttribute('aria-multiselectable', 'true');
 
     let nodes = this.querySelectorAll('pf-accordion-panel > pf-accordion-template');
     if (nodes) {
-      [].forEach.call(nodes, ( (panel) => {
-        if (panel._initialized) {
-          if (panel.state === 'shown') {
-            this._openPanels.push(panel);
-          }
-        } else {
-          panel.addEventListener('initialized', () => {
-            if (panel.state === 'shown') {
-              this._openPanels.push(panel);
-            }
-          });
-        }
+      Array.prototype.forEach.call(nodes, ((panel) => {
+        this._checkAndAddPanel(panel);
       }));
     }
 
     // catch bubbled events
-    this.addEventListener('show.bs.collapse', this._handlePanelShown.bind(this));
-    this.addEventListener('hide.bs.collapse', this._handlePanelHidden.bind(this));
+    this.addEventListener('show.bs.collapse', this._handlePanelShown);
+    this.addEventListener('hide.bs.collapse', this._handlePanelHidden);
 
     this._obeserver = new MutationObserver((mutations) => {
-      mutations.forEach( (mutationRecord) => {
+      mutations.forEach((mutationRecord) => {
         if (mutationRecord.type === 'childList') {
+
           // handle dynamic addition of panels
           for (let i = 0; i < mutationRecord.addedNodes.length; i++) {
             let node = mutationRecord.addedNodes[i];
             if (node instanceof PfAccordionPanel) {
               let panel = node.querySelector('pf-accordion-template');
-              if (panel !== null) {
-                if (panel.state === 'shown') {
-                  this._openPanels.push(panel);
-                }
-              }
+              this._checkAndAddPanel(panel);
             }
           }
 
@@ -107,7 +98,9 @@ export class PfAccordion extends HTMLElement {
       });
     });
 
-    this._obeserver.observe(this, { childList: true });
+    this._obeserver.observe(this, {
+      childList: true
+    });
 
     if (this.hasAttribute('fixedheight')) {
       // _initialized is raised after _initCollapseHeights
@@ -119,11 +112,30 @@ export class PfAccordion extends HTMLElement {
   }
 
   /**
+   * Check and add panel if it is initialized
+   * @private
+   * @param {PfAccordionTemplate} panel the toggle pane;
+   */
+  _checkAndAddPanel(panel) {
+    if (panel._initialized) {
+      if (panel.open) {
+        this._openPanels.push(panel);
+      }
+    } else {
+      pfUtil.once(panel, 'initialized', () => {
+        if (panel.open) {
+          this._openPanels.push(panel);
+        }
+      });
+    }
+  }
+
+  /**
    * Handle bubbled hide.bs.collapse on accordion
    * @param {Event} e event
    * @private
    */
-  _handlePanelHidden (e) {
+  _handlePanelHidden(e) {
     let index = this._openPanels.indexOf(e.target);
     if (index > -1) {
       this._openPanels.splice(index, 1);
@@ -135,10 +147,10 @@ export class PfAccordion extends HTMLElement {
    * @param {Event} e event
    * @private
    */
-  _handlePanelShown (e) {
+  _handlePanelShown(e) {
     let panel;
     while ((panel = this._openPanels.shift())) {
-      panel.hide();
+      panel.open = false;
     }
     this._openPanels.push(e.target);
   }
@@ -146,8 +158,9 @@ export class PfAccordion extends HTMLElement {
   /**
    * Called when the element is removed from the DOM
    */
-  detachedCallback () {
+  detachedCallback() {
     this._obeserver.disconnect();
+    window.removeEventListener('resize', this._fixedHeightListener);
   }
 
 
@@ -158,7 +171,7 @@ export class PfAccordion extends HTMLElement {
    * @param {string} oldValue The old attribute value
    * @param {string} newValue The new attribute value
    */
-  attributeChangedCallback (attrName, oldValue, newValue) {
+  attributeChangedCallback(attrName, oldValue, newValue) {
     if (attrName === 'fixedheight') {
       if (newValue) {
         this._initFixedHeight();
@@ -169,12 +182,10 @@ export class PfAccordion extends HTMLElement {
   }
 
   /**
-  * Recalculates and sets the collapse height after every browser resize
-  * @private
-  */
-  _setFixedHeight () {
-    let overflowY = 'hidden';
-
+   * Recalculates and sets the collapse height after every browser resize
+   * @private
+   */
+  _setFixedHeight() {
     let height = this.clientHeight;
 
     // Close any open panel
@@ -193,12 +204,14 @@ export class PfAccordion extends HTMLElement {
     // Determine the height remaining for opened collapse panels
     let bodyHeight = this.clientHeight - contentHeight;
 
+    // show scrollbars when content height > element height,
+    if (bodyHeight < 0) {
+      bodyHeight = this.clientHeight;
+    }
+
     // Make sure we have enough height to be able to scroll the contents if necessary
     if (bodyHeight < 25) {
       bodyHeight = 25;
-
-      // Allow the parent to scroll so the child elements are accessible
-      overflowY = 'auto';
     }
 
     // Reopen the initially opened panel
@@ -207,10 +220,10 @@ export class PfAccordion extends HTMLElement {
     });
 
     // run as requestAnimationFrame to prevent performance issues while resizing
-    requestAnimationFrame( () => {
-    // Set the max-height for the collapse panels
+    requestAnimationFrame(() => {
+      // Set the max-height for the collapse panels
       let panels = this.getElementsByTagName('pf-accordion-template');
-      Array.prototype.forEach.call(panels,(element) => {
+      Array.prototype.forEach.call(panels, (element) => {
         // Set the max-height and vertical scroll of the scroll element
         if (!element._oldStyle) {
           element._oldStyle = {
@@ -225,7 +238,7 @@ export class PfAccordion extends HTMLElement {
       this._oldStyle = {
         overflowY: this.style.overflowY
       };
-      this.style.overflowY =  overflowY;
+      this.style.overflowY = 'auto';
 
       if (!this._initialized) {
         // first time run, send an initialized event
@@ -238,12 +251,13 @@ export class PfAccordion extends HTMLElement {
   /**
    * @private
    */
-  _unsetFixedHeight () {
+  _unsetFixedHeight() {
     if (!this._fixedHeight) {
       return;
     }
     let panels = this.getElementsByTagName('pf-accordion-template');
-    Array.prototype.forEach.call(panels,(element) => {
+    Array.prototype.forEach.call(panels, (element) => {
+
       // Set the max-height and vertical scroll of the scroll element
       if (element._oldStyle) {
         element.style.maxHeight = element._oldStyle.maxHeight;
@@ -251,32 +265,32 @@ export class PfAccordion extends HTMLElement {
         element._oldStyle = null;
       }
     });
-    this.style.overflowY =  this._oldStyle.overflowY;
+    this.style.overflowY = this._oldStyle.overflowY;
     this._oldStyle = null;
     window.removeEventListener('resize', this._fixedHeihtListener);
     this._fixedHeight = false;
   }
 
   /**
-   * initializes a fixed-width accordion
+   * Initializes a fixed-width accordion
    * @private
    */
-  _initFixedHeight () {
+  _initFixedHeight() {
     if (this._fixedHeight) {
       return;
     }
     this._setFixedHeight();
     // Update on window resizing
-    this._fixedHeihtListener = this._setFixedHeight.bind(this);
+    this._fixedHeightListener = this._setFixedHeight.bind(this);
     window.addEventListener('resize', this._fixedHeihtListener);
     this._fixedHeight = true;
   }
 
-  get fixedHeight () {
+  get fixedHeight() {
     return this._fixedHeight;
   }
 
-  set fixedHeight (value) {
+  set fixedHeight(value) {
     if (value) {
       if (!this.hasAttribute('fixedheight')) {
         this.setAttribute('fixedheight', '');
