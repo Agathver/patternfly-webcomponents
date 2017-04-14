@@ -7,12 +7,12 @@
 
 class PfUtil {
 
-  constructor() {
-    this.isMSIE = (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat(RegExp.$1) : false;
+  constructor () {
+    this.isMSIE = (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false;
     this.isIE = /(MSIE|Trident\/|Edge\/)/i.test(window.navigator.userAgent);
   }
 
-  addClass(el, c) { // where modern browsers fail, use classList
+  addClass (el, c) { // where modern browsers fail, use classList
     if (el.classList) {
       el.classList.add(c);
     } else {
@@ -21,16 +21,17 @@ class PfUtil {
     }
   }
 
-  removeClass(el, c) {
+  removeClass (el, c) {
     if (el.classList) {
       el.classList.remove(c);
     } else {
-      el.className = el.className.replace(c, '').replace(/^\s+|\s+$/g, '');
+      el.className = el.className.replace(c,'').replace(/^\s+|\s+$/g,'');
     }
   }
 
-  getClosest(el, s) { //el is the element and s the selector of the closest item to find
+  getClosest (el, s) { //el is the element and s the selector of the closest item to find
     // source http://gomakethings.com/climbing-up-and-down-the-dom-tree-with-vanilla-javascript/
+<<<<<<< 987ea73e26c72e563c933fd5879c92e6573eab21
     const former = s.charAt(0);
     const latter = s.substr(1);
     for ( ; el && el !== document; el = el.parentNode ) {// Get closest match
@@ -44,6 +45,17 @@ class PfUtil {
         }
       } else { // we assume other selector is tag name
         if ( el.nodeName === s ) {
+=======
+    const f = s.charAt(0);
+    for ( ; el && el !== document; el = el.parentNode ) {// Get closest match
+      if ( f === '.' ) {// If selector is a class
+        if ( document.querySelector(s) !== undefined ) {
+          return el;
+        }
+      }
+      if ( f === '#' ) { // If selector is an ID
+        if ( el.id === s.substr(1) ) {
+>>>>>>> Trigger animation in proper sequence
           return el;
         }
       }
@@ -52,7 +64,7 @@ class PfUtil {
   }
 
   // tooltip / popover stuff
-  isElementInViewport(t) { // check if this.tooltip is in viewport
+  isElementInViewport (t) { // check if this.tooltip is in viewport
     const r = t.getBoundingClientRect();
     return (
       r.top >= 0 &&
@@ -62,7 +74,7 @@ class PfUtil {
     );
   }
 
-  getScroll() { // also Affix and scrollSpy uses it
+  getScroll () { // also Affix and scrollSpy uses it
     return {
       y: window.pageYOffset || document.documentElement.scrollTop,
       x: window.pageXOffset || document.documentElement.scrollLeft
@@ -89,23 +101,22 @@ class PfUtil {
   // https://github.com/thednp/bootstrap.native
   // Copyright (c) 2015 dnp_theme
 
-  getOuterHeight(child) {
+  getOuterHeight (child) {
     let childStyle = child && window.getComputedStyle(child),
       btp = /px/.test(childStyle.borderTopWidth) ? Math.round(childStyle.borderTopWidth.replace('px', '')) : 0,
       btb = /px/.test(childStyle.borderBottomWidth) ? Math.round(childStyle.borderBottomWidth.replace('px', '')) : 0,
       mtp = /px/.test(childStyle.marginTop) ? Math.round(childStyle.marginTop.replace('px', '')) : 0,
       mbp = /px/.test(childStyle.marginBottom) ? Math.round(childStyle.marginBottom.replace('px', '')) : 0;
-    return child.clientHeight + parseInt(btp) + parseInt(btb) + parseInt(mtp) + parseInt(mbp);
+    return child.clientHeight + parseInt( btp ) + parseInt( btb ) + parseInt( mtp ) + parseInt( mbp );
   }
-  getMaxHeight(parent) { // get collapse trueHeight and border
+  getMaxHeight (parent) { // get collapse trueHeight and border
     let parentHeight = 0;
     for (let k = 0, ll = parent.children[length]; k < ll; k++) {
       parentHeight += this.getOuterHeight(parent.children[k]);
     }
     return parentHeight;
   }
-
-  once(element, event, handler, context) {
+  once (element, event, handler, context) {
     let ephemeralHandler = function (e) {
       try {
         handler.call(context || this, e);
@@ -113,11 +124,14 @@ class PfUtil {
         element.removeEventListener(event, ephemeralHandler);
       }
     };
-
     element.addEventListener(event, ephemeralHandler);
   }
 }
 let pfUtil = new PfUtil();
+<<<<<<< 987ea73e26c72e563c933fd5879c92e6573eab21
 export {
   pfUtil
 };
+=======
+export {pfUtil};
+>>>>>>> Trigger animation in proper sequence
