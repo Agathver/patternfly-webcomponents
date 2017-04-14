@@ -153,11 +153,14 @@ describe('PatternFly Accordion Component Tests', function () {
     });
   });
 
-  it('closes other open panel when another is opened', function () {
-    accordionTemplate.open = true;
-    return addElementToBody(accordion).then(function () {
-      accordionTemplate2.open = true;
+  it('closes other open panel when another is opened', function (done) {
+    accordionTemplate.addEventListener('pf-accordion-collapsed', function () {
       expect(accordionTemplate.open).toBe(false);
+      done();
+    });
+    accordionTemplate.open = true;
+    addElementToBody(accordion).then(function () {
+      accordionTemplate2.open = true;
     });
   });
 

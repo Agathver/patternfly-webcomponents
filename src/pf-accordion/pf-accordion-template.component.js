@@ -85,23 +85,27 @@ export class PfAccordionTemplate extends HTMLElement {
    */
   _expand() {
     if (this._transitioning) {
+      console.log('Canceled due to incomplete transition'); // eslint-disable-line
       return;
     }
     this._transitioning = true;
 
     this._oldStyle.height = this.style.height;
 
-    this.classList.remove('collapse');
-    this.style.height = '0px';
-    this.classList.add('collapsing');
-    let body = this.querySelector('pf-accordion-body');
-    let maxHeight = body ? body.clientHeight : 0;
-    this.style.height = maxHeight + 'px';
+    requestAnimationFrame(() => {
+      this.classList.remove('collapse');
 
-    this.dispatchEvent(new CustomEvent('pf-accordion-expanding', {
-      bubbles: true,
-      cancelable: false
-    }));
+      this.style.height = '0px';
+      this.classList.add('collapsing');
+      let body = this.querySelector('pf-accordion-body');
+      let maxHeight = body ? body.clientHeight : 0;
+      this.style.height = maxHeight + 'px';
+
+      this.dispatchEvent(new CustomEvent('pf-accordion-expanding', {
+        bubbles: true,
+        cancelable: false
+      }));
+    });
   }
 
   /**
@@ -109,6 +113,7 @@ export class PfAccordionTemplate extends HTMLElement {
    */
   _collapse() {
     if (this._transitioning) {
+      console.log('Canceled due to incomplete transition'); // eslint-disable-line
       return;
     }
     this._transitioning = true;
@@ -118,15 +123,17 @@ export class PfAccordionTemplate extends HTMLElement {
     this._oldStyle.height = this.style.height;
     this.style.height = maxHeight + 'px';
 
-    this.classList.add('collapsing');
-    this.classList.remove('collapse');
-    this.classList.remove('in');
-    this.style.height = '0px';
+    requestAnimationFrame(() => {
+      this.classList.add('collapsing');
+      this.classList.remove('collapse');
+      this.classList.remove('in');
+      this.style.height = '0px';
 
-    this.dispatchEvent(new CustomEvent('pf-accordion-collapsing', {
-      bubbles: true,
-      cancelable: false
-    }));
+      this.dispatchEvent(new CustomEvent('pf-accordion-collapsing', {
+        bubbles: true,
+        cancelable: false
+      }));
+    });
   }
 
   /**
