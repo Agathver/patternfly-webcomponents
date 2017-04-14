@@ -2,7 +2,7 @@ describe('PatternFly Accordion Component Tests', function () {
   var accordion, accordionPanel, accordionHeading, accordionTemplate, accordionHeadingToggle,
     accordionPanel2, accordionHeading2, accordionTemplate2, accordionHeadingToggle2;
 
-  function addElementToBody(element) {
+  function addChild(parent, element) {
     var promise = new Promise(function (resolve) {
       var observer = new MutationObserver(function () {
         resolve();
@@ -15,8 +15,12 @@ describe('PatternFly Accordion Component Tests', function () {
       };
       observer.observe(element, config);
     });
-    document.body.appendChild(element);
+    parent.appendChild(element);
     return promise;
+  }
+
+  function addElementToBody(element) {
+    return addChild(document.body, element);
   }
 
   beforeEach(function () {
@@ -254,6 +258,41 @@ describe('PatternFly Accordion Component Tests', function () {
       expect(accordionTemplate2.style.maxHeight).toBe('');
       expect(accordionTemplate.style.overflowY).toBe('');
       expect(accordionTemplate2.style.overflowY).toBe('');
+    });
+  });
+
+  it('picks the next toggle element when current is removed', function () {
+    var newToggle = document.createElement('a');
+    newToggle .setAttribute('data-toggle', 'collapse');
+    accordionHeading.appendChild(newToggle);
+
+    return addElementToBody(accordion).then(function () {
+
+      expect(accordionHeading._toggle).toBeDefined();
+      accordionHeading.removeChild(accordionHeadingToggle);
+
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          expect(accordionHeading._toggle).toBe(newToggle);
+          resolve();
+        }, 100);
+      });
+    });
+  });
+
+  it('picks the toggle when added after initialization', function () {
+    var newToggle = document.createElement('a');
+    newToggle .setAttribute('data-toggle', 'collapse');
+    accordionHeading.removeChild(accordionHeadingToggle);
+    return addElementToBody(accordion).then(function () {
+      expect(accordionHeading._toggle).toBe(null);
+      accordionHeading.appendChild(newToggle);
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          expect(accordionHeading._toggle).toBe(newToggle);
+          resolve();
+        }, 200);
+      });
     });
   });
 });

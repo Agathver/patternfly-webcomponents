@@ -20,6 +20,28 @@ export class PfAccordionHeading extends HTMLElement {
         });
       }
     }
+
+    this._observer = new MutationObserver((mutations) => {
+      mutations.forEach((record) => {
+        if (this._toggle) {
+          for (let i = 0, length = record.removedNodes.length; i < length; i++) {
+            if (record.removedNodes[i] === this._toggle) {
+              this._toggle.removeEventListener('click', this._toggleClickHandler);
+              this._toggle.removeEventListener('keyup', this._toggleKeyUpHandler);
+              this._initializeToggle();
+            }
+          }
+        } else {
+          if (record.addedNodes.length > 0) {
+            this._initializeToggle();
+          }
+        }
+      });
+    });
+
+    this._observer.observe(this, {
+      childList: true
+    });
   }
 
   /**
@@ -28,25 +50,30 @@ export class PfAccordionHeading extends HTMLElement {
    */
   _initializeToggle() {
     this._toggle = this.querySelector('*[data-toggle="collapse"]');
-    this._toggle.addEventListener('click', this._handleToggleClick.bind(this));
-    this._toggle.addEventListener('keyup', this._handleToggleKeyUp.bind(this));
 
-    if (this._target !== null) {
-      if (this._target.open) {
-        this._toggle.classList.remove('collapsed');
-        this._toggle.setAttribute('aria-expanded', 'true');
-      } else {
-        this._toggle.classList.add('collapsed');
-        this._toggle.setAttribute('aria-expanded', 'false');
+    if (this._toggle) {
+      this._toggleClickHandler = this._handleToggleClick.bind(this);
+      this._toggleKeyUpHandler = this._handleToggleKeyUp.bind(this);
+      this._toggle.addEventListener('click', this._toggleClickHandler);
+      this._toggle.addEventListener('keyup', this._toggleKeyUpHandler);
+
+      if (this._target !== null) {
+        if (this._target.open) {
+          this._toggle.classList.remove('collapsed');
+          this._toggle.setAttribute('aria-expanded', 'true');
+        } else {
+          this._toggle.classList.add('collapsed');
+          this._toggle.setAttribute('aria-expanded', 'false');
+        }
+        this._target.addEventListener('pf-accordion-expanding', () => {
+          this._toggle.classList.remove('collapsed');
+          this._toggle.setAttribute('aria-expanded', 'true');
+        });
+        this._target.addEventListener('pf-accordion-collapsing', () => {
+          this._toggle.classList.add('collapsed');
+          this._toggle.setAttribute('aria-expanded', 'false');
+        });
       }
-      this._target.addEventListener('pf-accordion-expanding', () => {
-        this._toggle.classList.remove('collapsed');
-        this._toggle.setAttribute('aria-expanded', 'true');
-      });
-      this._target.addEventListener('pf-accordion-collapsing', () => {
-        this._toggle.classList.add('collapsed');
-        this._toggle.setAttribute('aria-expanded', 'false');
-      });
     }
   }
 
@@ -78,6 +105,13 @@ export class PfAccordionHeading extends HTMLElement {
   _handleToggleClick(event) {
     event.preventDefault();
     this._doToggle();
+  }
+
+  /**
+   * Called when the element is removed from the DOM
+   */
+  detachedCallback() {
+    this._observer.disconnect();
   }
 }
 (function () {
