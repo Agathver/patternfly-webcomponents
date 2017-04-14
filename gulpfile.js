@@ -21,11 +21,13 @@ gulp.task('font', function(){
   return gulp.src([
       'node_modules/patternfly/dist/fonts/*'
     ])
+    .pipe($.newer('dist/fonts'))
     .pipe(gulp.dest('dist/fonts'));
 });
 
 gulp.task('js', ['lint','copy'], function () {
   return gulp.src(['src/*/*.js', '!src/*/*.spec.js'])
+    .pipe($.newer('dist/es2015'))
     .pipe($.plumber())
     .pipe($.babel(
       {presets: ['es2015']}
@@ -36,6 +38,7 @@ gulp.task('js', ['lint','copy'], function () {
 
 gulp.task('copy', function() {
   return gulp.src(['src/customElementShim.js', ''])
+    .pipe($.newer('dist/js'))
     .pipe(gulp.dest('dist/js'));
 });
 
@@ -53,6 +56,7 @@ gulp.task('lint', function () {
 
 gulp.task('scss', function() {
   return gulp.src(['src/scss/*.scss'])
+    .pipe($.newer('dist/css'))
     .pipe($.plumber())
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('dist/css'));
@@ -60,6 +64,7 @@ gulp.task('scss', function() {
 
 gulp.task('css', function() {
   return gulp.src(['node_modules/patternfly/dist/css/**/*'])
+    .pipe($.newer('dist/css'))
     .pipe(gulp.dest('dist/css'));
 });
 
@@ -119,12 +124,14 @@ gulp.task('webpack', ['js'], function() {
     webpackConfig.plugins.push(new BundleAnalyzerPlugin());
   }
   return gulp.src('src/patternfly.js')
+    .pipe($.newer('dist/js'))
     .pipe(webpack( webpackConfig ))
     .pipe(gulp.dest('dist/js'));
 });
 
 gulp.task('gettext-extract', function () {
   return gulp.src(["src/**/*.js"])
+    .pipe($.newer('dist/i18n/patternfly.pot'))
     .pipe(gettext())
     .pipe(rename("patternfly.pot"))
     .pipe(gulp.dest("dist/i18n"));
@@ -140,9 +147,9 @@ gulp.task('serve', function() {
     port: browserSyncPort
   });
 
-  gulp.watch('index.html', ['build']);
-  gulp.watch('app/*.html', ['build']);
-  gulp.watch('src/**/*.js', ['build']);
-  gulp.watch('src/**/*.html', ['build']);
-  gulp.watch("dist/**/*").on('change', browserSync.reload);
+  gulp.watch('index.html', ['build', browserSync.reload]);
+  gulp.watch('app/*.html', ['build', browserSync.reload]);
+  gulp.watch('src/**/*.js', ['build', browserSync.reload]);
+  gulp.watch('src/**/*.html', ['build', browserSync.reload]);
+  // gulp.watch("dist/**/*").on('change', browserSync.reload);
 });
