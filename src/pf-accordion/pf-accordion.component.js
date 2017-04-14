@@ -69,7 +69,7 @@ export class PfAccordion extends HTMLElement {
     this.addEventListener('pf-accordion-expanding', this._handlePanelShown);
     this.addEventListener('pf-accordion-collapsing', this._handlePanelHidden);
 
-    this._obeserver = new MutationObserver((mutations) => {
+    this._observer = new MutationObserver((mutations) => {
       mutations.forEach((mutationRecord) => {
         if (mutationRecord.type === 'childList') {
 
@@ -99,7 +99,7 @@ export class PfAccordion extends HTMLElement {
       });
     });
 
-    this._obeserver.observe(this, {
+    this._observer.observe(this, {
       childList: true
     });
 
@@ -160,7 +160,7 @@ export class PfAccordion extends HTMLElement {
    * Called when the element is removed from the DOM
    */
   detachedCallback() {
-    this._obeserver.disconnect();
+    this._observer.disconnect();
     window.removeEventListener('resize', this._fixedHeightListener);
   }
 
