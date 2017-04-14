@@ -39,6 +39,7 @@ import {
  *   </pf-accordion-panel>
  * </pf-accordion>
  *
+ * @prop fixedHeight {Boolean} Whether the accrodion is a fixed-height accordion
  */
 export class PfAccordion extends HTMLElement {
   /**

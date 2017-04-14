@@ -1,4 +1,5 @@
 import PfAccordionBody from 'pf-accordion-body.component';
+import { pfUtil } from 'pf-utils';
 /**
  * <b>&lt;pf-accordion-template&gt;</b> element for Patternfly Web Components
  *
@@ -40,7 +41,6 @@ export class PfAccordionTemplate extends HTMLElement {
    */
   createdCallback() {
     this._initialized = false;
-    this._oldStyle = {};
   }
 
   /**
@@ -84,56 +84,41 @@ export class PfAccordionTemplate extends HTMLElement {
    * Make the panel visible
    */
   _expand() {
-    if (this._transitioning) {
-      console.log('Canceled due to incomplete transition'); // eslint-disable-line
-      return;
-    }
+
     this._transitioning = true;
 
-    this._oldStyle.height = this.style.height;
+    this.classList.add('collapsing');
+    this.classList.add('in');
 
-    requestAnimationFrame(() => {
-      this.classList.remove('collapse');
-
-      this.style.height = '0px';
-      this.classList.add('collapsing');
-      let body = this.querySelector('pf-accordion-body');
-      let maxHeight = body ? body.clientHeight : 0;
-      this.style.height = maxHeight + 'px';
+    // force a delay, to allow layout updates
+    setTimeout(() => {
+      this.style.height = pfUtil.getMaxHeight(this) + 'px';
 
       this.dispatchEvent(new CustomEvent('pf-accordion-expanding', {
         bubbles: true,
         cancelable: false
       }));
-    });
+    }, 10);
   }
 
   /**
    * Hide the panel
    */
   _collapse() {
-    if (this._transitioning) {
-      console.log('Canceled due to incomplete transition'); // eslint-disable-line
-      return;
-    }
     this._transitioning = true;
-    let body = this.querySelector('pf-accordion-body');
-    let maxHeight = body ? body.clientHeight : 0;
-
-    this._oldStyle.height = this.style.height;
+    let maxHeight = pfUtil.getMaxHeight(this);
     this.style.height = maxHeight + 'px';
+    this.classList.add('collapsing');
 
-    requestAnimationFrame(() => {
-      this.classList.add('collapsing');
-      this.classList.remove('collapse');
-      this.classList.remove('in');
+    // force a delay, to allow layout updates
+    setTimeout(() => {
       this.style.height = '0px';
 
       this.dispatchEvent(new CustomEvent('pf-accordion-collapsing', {
         bubbles: true,
         cancelable: false
       }));
-    });
+    }, 10);
   }
 
   /**
@@ -151,16 +136,23 @@ export class PfAccordionTemplate extends HTMLElement {
     this.classList.remove('collapsing');
     this.classList.add('collapse');
     if (this.open) {
-      this.classList.add('in');
+      this.setAttribute('aria-expanded', 'true');
+      this.classList.remove('collapsing');
+
       this.dispatchEvent(new CustomEvent('pf-accordion-expanded', {
         bubbles: true
       }));
     } else {
+      this.setAttribute('aria-expanded', 'false');
+      this.classList.remove('collapsing');
+      this.classList.remove('in');
+
       this.dispatchEvent(new CustomEvent('pf-accordion-collapsed', {
         bubbles: true
       }));
     }
-    this.style.height = this._oldStyle.height;
+
+    this.style.height = '';
     this._transitioning = false;
   }
 

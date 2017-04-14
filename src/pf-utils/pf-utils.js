@@ -31,7 +31,6 @@ class PfUtil {
 
   getClosest (el, s) { //el is the element and s the selector of the closest item to find
     // source http://gomakethings.com/climbing-up-and-down-the-dom-tree-with-vanilla-javascript/
-<<<<<<< 987ea73e26c72e563c933fd5879c92e6573eab21
     const former = s.charAt(0);
     const latter = s.substr(1);
     for ( ; el && el !== document; el = el.parentNode ) {// Get closest match
@@ -45,17 +44,6 @@ class PfUtil {
         }
       } else { // we assume other selector is tag name
         if ( el.nodeName === s ) {
-=======
-    const f = s.charAt(0);
-    for ( ; el && el !== document; el = el.parentNode ) {// Get closest match
-      if ( f === '.' ) {// If selector is a class
-        if ( document.querySelector(s) !== undefined ) {
-          return el;
-        }
-      }
-      if ( f === '#' ) { // If selector is an ID
-        if ( el.id === s.substr(1) ) {
->>>>>>> Trigger animation in proper sequence
           return el;
         }
       }
@@ -81,6 +69,7 @@ class PfUtil {
     };
   }
 
+<<<<<<< 2157fc52262d21feaa88d280d56f269461cb83b8
   reflow (el) { // force reflow
     return el.offsetHeight;
   }
@@ -109,10 +98,12 @@ class PfUtil {
       mbp = /px/.test(childStyle.marginBottom) ? Math.round(childStyle.marginBottom.replace('px', '')) : 0;
     return child.clientHeight + parseInt( btp ) + parseInt( btb ) + parseInt( mtp ) + parseInt( mbp );
   }
+=======
+>>>>>>> Add initial delay to smooth out animations
   getMaxHeight (parent) { // get collapse trueHeight and border
     let parentHeight = 0;
-    for (let k = 0, ll = parent.children[length]; k < ll; k++) {
-      parentHeight += this.getOuterHeight(parent.children[k]);
+    for (let k = 0, ll = parent.children.length; k < ll; k++) {
+      parentHeight += parent.children[k].offsetHeight;
     }
     return parentHeight;
   }

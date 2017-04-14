@@ -145,10 +145,10 @@ describe('PatternFly Accordion Component Tests', function () {
       accordionTemplate.open = true;
 
       return new Promise(function (resolve) {
-        requestAnimationFrame(function () {
+        setTimeout(function () {
           expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(false);
           resolve();
-        });
+        }, 20);
       });
     });
   });
@@ -175,8 +175,8 @@ describe('PatternFly Accordion Component Tests', function () {
           setTimeout(function () {
             expect(accordionTemplate.open).toBe(false);
             resolve();
-          }, 1000);
-        }, 1000);
+          }, 100);
+        }, 100);
       });
     });
   });
