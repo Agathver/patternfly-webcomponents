@@ -33,7 +33,7 @@ export class PfAccordionTemplate extends HTMLElement {
     }
 
     this._initialized = true;
-    this.dispatchEvent(new Event('pf-accordion-initialized'));
+    this.dispatchEvent(new Event('pf-accordion.initialized'));
   }
 
   /**
@@ -94,7 +94,7 @@ export class PfAccordionTemplate extends HTMLElement {
     setTimeout(() => {
       this.style.height = pfUtil.getMaxHeight(this) + 'px';
 
-      this.dispatchEvent(new CustomEvent('pf-accordion-expanding', {
+      this.dispatchEvent(new CustomEvent('pf-accordion.expanding', {
         bubbles: true,
         cancelable: false
       }));
@@ -114,7 +114,7 @@ export class PfAccordionTemplate extends HTMLElement {
     setTimeout(() => {
       this.style.height = '0px';
 
-      this.dispatchEvent(new CustomEvent('pf-accordion-collapsing', {
+      this.dispatchEvent(new CustomEvent('pf-accordion.collapsing', {
         bubbles: true,
         cancelable: false
       }));
@@ -139,7 +139,7 @@ export class PfAccordionTemplate extends HTMLElement {
       this.setAttribute('aria-expanded', 'true');
       this.classList.remove('collapsing');
 
-      this.dispatchEvent(new CustomEvent('pf-accordion-expanded', {
+      this.dispatchEvent(new CustomEvent('pf-accordion.expanded', {
         bubbles: true
       }));
     } else {
@@ -147,7 +147,7 @@ export class PfAccordionTemplate extends HTMLElement {
       this.classList.remove('collapsing');
       this.classList.remove('in');
 
-      this.dispatchEvent(new CustomEvent('pf-accordion-collapsed', {
+      this.dispatchEvent(new CustomEvent('pf-accordion.collapsed', {
         bubbles: true
       }));
     }
