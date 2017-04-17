@@ -66,8 +66,8 @@ export class PfAccordion extends HTMLElement {
     }
 
     // catch bubbled events
-    this.addEventListener('pf-accordion-expanding', this._handlePanelShown);
-    this.addEventListener('pf-accordion-collapsing', this._handlePanelHidden);
+    this.addEventListener('pf-accordion.expanding', this._handlePanelShown);
+    this.addEventListener('pf-accordion.collapsing', this._handlePanelHidden);
 
     this._observer = new MutationObserver((mutations) => {
       mutations.forEach((mutationRecord) => {
@@ -108,7 +108,7 @@ export class PfAccordion extends HTMLElement {
       this._initFixedHeight();
     } else {
       this._initialized = true;
-      this.dispatchEvent(new Event('pf-accordion-initialized'));
+      this.dispatchEvent(new Event('pf-accordion.initialized'));
     }
   }
 
@@ -123,7 +123,7 @@ export class PfAccordion extends HTMLElement {
         this._openPanels.push(panel);
       }
     } else {
-      pfUtil.once(panel, 'pf-accordion-initialized', () => {
+      pfUtil.once(panel, 'pf-accordion.initialized', () => {
         if (panel.open) {
           this._openPanels.push(panel);
         }
@@ -244,7 +244,7 @@ export class PfAccordion extends HTMLElement {
       if (!this._initialized) {
         // first time run, send an initialized event
         this._initialized = true;
-        this.dispatchEvent(new Event('pf-accordion-initialized'));
+        this.dispatchEvent(new Event('pf-accordion.initialized'));
       }
     });
   }
