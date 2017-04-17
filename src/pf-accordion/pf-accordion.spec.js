@@ -36,11 +36,11 @@ describe('PatternFly Accordion Component Tests', function () {
     accordionTemplate.id = 'pfAccordionTemplate';
 
     // manually trigger 'ontransitionend' for tests in absence of css
-    accordionTemplate.addEventListener('pf-accordion-expanding', function () {
+    accordionTemplate.addEventListener('pf-accordion.expanding', function () {
       accordionTemplate._handleTransitionEnd();
     });
 
-    accordionTemplate.addEventListener('pf-accordion-collapsing', function () {
+    accordionTemplate.addEventListener('pf-accordion.collapsing', function () {
       accordionTemplate._handleTransitionEnd();
     });
 
@@ -60,11 +60,11 @@ describe('PatternFly Accordion Component Tests', function () {
     accordionTemplate2.id = 'pfAccordionTemplate2';
 
     // manually trigger 'ontransitionend' for tests in absence of css
-    accordionTemplate2.addEventListener('pf-accordion-expanding', function () {
+    accordionTemplate2.addEventListener('pf-accordion.expanding', function () {
       accordionTemplate2._handleTransitionEnd();
     });
 
-    accordionTemplate2.addEventListener('pf-accordion-collapsing', function () {
+    accordionTemplate2.addEventListener('pf-accordion.collapsing', function () {
       accordionTemplate2._handleTransitionEnd();
     });
     accordionHeadingToggle2 = document.createElement('a');
@@ -123,7 +123,7 @@ describe('PatternFly Accordion Component Tests', function () {
 
   it('put the correct class and aria attributes for an accordion template when it has open attribute', function (done) {
     accordionTemplate.setAttribute('open', '');
-    accordionTemplate.addEventListener('pf-accordion-initialized', function () {
+    accordionTemplate.addEventListener('pf-accordion.initialized', function () {
       expect(accordionTemplate.classList.contains('in')).toBe(true);
       expect(accordionTemplate.open).toBe(true);
       done();
@@ -158,7 +158,7 @@ describe('PatternFly Accordion Component Tests', function () {
   });
 
   it('closes other open panel when another is opened', function (done) {
-    accordionTemplate.addEventListener('pf-accordion-collapsed', function () {
+    accordionTemplate.addEventListener('pf-accordion.collapsed', function () {
       expect(accordionTemplate.open).toBe(false);
       done();
     });
@@ -187,7 +187,7 @@ describe('PatternFly Accordion Component Tests', function () {
 
   it('changes the display state of acccordion template with open', function (done) {
     addElementToBody(accordion).then(function () {
-      accordionTemplate.addEventListener('pf-accordion-expanded', function () {
+      accordionTemplate.addEventListener('pf-accordion.expanded', function () {
         expect(accordionTemplate.classList.contains('in')).toBe(true);
 
         // wait for transitioning to complete
@@ -196,7 +196,7 @@ describe('PatternFly Accordion Component Tests', function () {
         });
       });
 
-      accordionTemplate.addEventListener('pf-accordion-collapsed', function () {
+      accordionTemplate.addEventListener('pf-accordion.collapsed', function () {
         requestAnimationFrame(function () {
           expect(accordionTemplate.classList.contains('in')).toBe(false);
           done();
@@ -239,7 +239,7 @@ describe('PatternFly Accordion Component Tests', function () {
 
   it('sets css styles for all panels when fixed-height component is enabled', function (done) {
     accordion.setAttribute('fixedheight', 'fixedheight');
-    accordion.addEventListener('pf-accordion-initialized', function () {
+    accordion.addEventListener('pf-accordion.initialized', function () {
       expect(accordionTemplate.style.maxHeight).not.toBe('');
       expect(accordionTemplate2.style.maxHeight).not.toBe('');
       expect(accordionTemplate.style.overflowY).not.toBe('');
