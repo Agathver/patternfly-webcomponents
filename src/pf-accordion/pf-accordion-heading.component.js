@@ -93,7 +93,7 @@ export class PfAccordionHeading extends HTMLElement {
    */
   _handleToggleKeyUp(event) {
     event.preventDefault();
-    if (event.keyCode === 32) {
+    if (32 === event.keyCode) {
       this._doToggle();
     }
   }
