@@ -76,7 +76,7 @@ export class PfAccordion extends HTMLElement {
           // handle dynamic addition of panels
           for (let i = 0; i < mutationRecord.addedNodes.length; i++) {
             let node = mutationRecord.addedNodes[i];
-            if (node instanceof PfAccordionPanel) {
+            if (node.tagName.toLowerCase() === 'pf-accordion-panel') {
               let panel = node.querySelector('pf-accordion-template');
               this._checkAndAddPanel(panel);
             }
@@ -84,8 +84,8 @@ export class PfAccordion extends HTMLElement {
 
           // handle removal of panels
           for (let i = 0; i < mutationRecord.removedNodes.length; i++) {
-            let node = mutationRecord.addedNodes[i];
-            if (node instanceof PfAccordionPanel) {
+            let node = mutationRecord.removedNodes[i];
+            if (node.tagName.toLowerCase() === 'pf-accordion-panel') {
               let panel = node.querySelector('pf-accordion-template');
               if (panel !== null) {
                 let index = this._openPanels.indexOf(panel);
@@ -104,7 +104,7 @@ export class PfAccordion extends HTMLElement {
     });
 
     if (this.hasAttribute('fixedheight')) {
-      // _initialized is raised after _initCollapseHeights
+      // _initialized is raised after _initFixedHeight
       this._initFixedHeight();
     } else {
       this._initialized = true;
@@ -283,7 +283,7 @@ export class PfAccordion extends HTMLElement {
     this._setFixedHeight();
     // Update on window resizing
     this._fixedHeightListener = this._setFixedHeight.bind(this);
-    window.addEventListener('resize', this._fixedHeihtListener);
+    window.addEventListener('resize', this._fixedHeightListener);
     this._fixedHeight = true;
   }
 
