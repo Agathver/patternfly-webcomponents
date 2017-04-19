@@ -19,6 +19,31 @@ describe('PatternFly Accordion Component Tests', function () {
     return promise;
   }
 
+  function removeChild(parent, element) {
+    var promise = new Promise(function (resolve) {
+      var observer = new MutationObserver(function (mutations) {
+        Array.prototype.forEach.call(mutations, function (mutationRecord) {
+          var i;
+          for (i = 0; i < mutationRecord.removedNodes.length; i++) {
+            if (element === mutationRecord.removedNodes[i]) {
+              observer.disconnect();
+              resolve();
+              break;
+            }
+          }
+        });
+      });
+      var config = {
+        attributes: true,
+        childList: true,
+        characterData: true
+      };
+      observer.observe(parent, config);
+    });
+    parent.removeChild(element);
+    return promise;
+  }
+
   function addElementToBody(element) {
     return addChild(document.body, element);
   }
@@ -134,7 +159,6 @@ describe('PatternFly Accordion Component Tests', function () {
   it('put the correct class on accordion toggle when accordion template is hidden', function () {
     return addElementToBody(accordion).then(function () {
       accordionTemplate.open = false;
-
       return new Promise(function (resolve) {
         requestAnimationFrame(function () {
           expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(true);
@@ -147,7 +171,6 @@ describe('PatternFly Accordion Component Tests', function () {
   it('put the correct class on accordion toggle when accordion template is shown', function () {
     return addElementToBody(accordion).then(function () {
       accordionTemplate.open = true;
-
       return new Promise(function (resolve) {
         setTimeout(function () {
           expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(false);
@@ -263,7 +286,7 @@ describe('PatternFly Accordion Component Tests', function () {
 
   it('picks the next toggle element when current is removed', function () {
     var newToggle = document.createElement('a');
-    newToggle .setAttribute('data-toggle', 'collapse');
+    newToggle.setAttribute('data-toggle', 'collapse');
     accordionHeading.appendChild(newToggle);
 
     return addElementToBody(accordion).then(function () {
@@ -282,7 +305,7 @@ describe('PatternFly Accordion Component Tests', function () {
 
   it('picks the toggle when added after initialization', function () {
     var newToggle = document.createElement('a');
-    newToggle .setAttribute('data-toggle', 'collapse');
+    newToggle.setAttribute('data-toggle', 'collapse');
     accordionHeading.removeChild(accordionHeadingToggle);
     return addElementToBody(accordion).then(function () {
       expect(accordionHeading._toggle).toBe(null);
@@ -292,6 +315,29 @@ describe('PatternFly Accordion Component Tests', function () {
           expect(accordionHeading._toggle).toBe(newToggle);
           resolve();
         }, 200);
+      });
+    });
+  });
+
+  it('allows to add new panels after initialization', function () {
+    var newChild = document.createElement('pf-accordion-panel');
+    newChild.innerHTML = '<pf-accordion-heading>< a href="#" data-toggle="collapse">Heading</a></pf-accordion-heading><pf-accordion-template><pf-accordion-body></pf-accordion-body></pf-accordion-template>';
+    return addElementToBody(accordion).then(function () {
+      return addChild(accordion, newChild);
+    }).then(function () {
+      expect(newChild.parentNode).toBe(accordion);
+    });
+  });
+
+  it('allows to remove panels after addition', function () {
+    return addElementToBody(accordion).then(function () {
+      return removeChild(accordion, accordionPanel2);
+    }).then(function () {
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          expect(accordionPanel2.parentNode).toBe(null);
+          resolve();
+        }, 100);
       });
     });
   });
