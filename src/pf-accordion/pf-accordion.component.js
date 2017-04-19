@@ -71,12 +71,13 @@ export class PfAccordion extends HTMLElement {
 
     this._observer = new MutationObserver((mutations) => {
       mutations.forEach((mutationRecord) => {
-        if (mutationRecord.type === 'childList') {
+        if ('childList' === mutationRecord.type) {
 
           // handle dynamic addition of panels
           for (let i = 0; i < mutationRecord.addedNodes.length; i++) {
             let node = mutationRecord.addedNodes[i];
-            if (node.tagName.toLowerCase() === 'pf-accordion-panel') {
+            // only check for element nodes
+            if (1 === node.nodeType && 'pf-accordion-panel' === node.tagName.toLowerCase()) {
               let panel = node.querySelector('pf-accordion-template');
               this._checkAndAddPanel(panel);
             }
@@ -85,9 +86,10 @@ export class PfAccordion extends HTMLElement {
           // handle removal of panels
           for (let i = 0; i < mutationRecord.removedNodes.length; i++) {
             let node = mutationRecord.removedNodes[i];
-            if (node.tagName.toLowerCase() === 'pf-accordion-panel') {
+            // only check for element nodes
+            if (1 === node.nodeType && 'pf-accordion-panel' === node.tagName.toLowerCase()) {
               let panel = node.querySelector('pf-accordion-template');
-              if (panel !== null) {
+              if (null !== panel) {
                 let index = this._openPanels.indexOf(panel);
                 if (index > -1) {
                   this._openPanels.splice(index, 1);
@@ -173,7 +175,7 @@ export class PfAccordion extends HTMLElement {
    * @param {string} newValue The new attribute value
    */
   attributeChangedCallback(attrName, oldValue, newValue) {
-    if (attrName === 'fixedheight') {
+    if ('fixedheight' === attrName) {
       if (newValue) {
         this._initFixedHeight();
       } else {
