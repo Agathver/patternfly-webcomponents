@@ -10,6 +10,43 @@ export class PfAccordionHeading extends HTMLElement {
     this.classList.add('panel-heading');
     this.setAttribute('role', 'tab');
 
+    this._findTarget();
+
+    this._observer = new MutationObserver((mutations) => {
+      mutations.forEach((record) => {
+        // detach handlers on toggle removal, try to get another toggle
+        if (this._toggle || this._target) {
+          for (let i = 0, length = record.removedNodes.length; i < length; i++) {
+            if (record.removedNodes[i] === this._toggle) {
+              this._toggle.removeEventListener('click', this._toggleClickHandler);
+              this._toggle.removeEventListener('keyup', this._toggleKeyUpHandler);
+              this._initializeToggle();
+            }
+
+            if (record.removedNodes[i] === this._target) {
+              this._findTarget();
+            }
+          }
+        }
+
+        // if there is no toggle or target initialized
+        if (record.addedNodes.length > 0) {
+          if (!this._target) {
+            this._findTarget();
+          } else if (!this._toggle) {
+            this._initializeToggle();
+          }
+        }
+      });
+    });
+
+    this._observer.observe(this, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  _findTarget() {
     this._target = this.parentElement.querySelector('pf-accordion-template');
     if (this._target) {
       if (this._target._initialized) {
@@ -20,30 +57,7 @@ export class PfAccordionHeading extends HTMLElement {
         });
       }
     }
-
-    this._observer = new MutationObserver((mutations) => {
-      mutations.forEach((record) => {
-        if (this._toggle) {
-          for (let i = 0, length = record.removedNodes.length; i < length; i++) {
-            if (record.removedNodes[i] === this._toggle) {
-              this._toggle.removeEventListener('click', this._toggleClickHandler);
-              this._toggle.removeEventListener('keyup', this._toggleKeyUpHandler);
-              this._initializeToggle();
-            }
-          }
-        } else {
-          if (record.addedNodes.length > 0) {
-            this._initializeToggle();
-          }
-        }
-      });
-    });
-
-    this._observer.observe(this, {
-      childList: true
-    });
   }
-
   /**
    * Finds the toggle element and adds appropriate listeners to it.
    * @private

@@ -175,7 +175,7 @@ describe('PatternFly Accordion Component Tests', function () {
         setTimeout(function () {
           expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(false);
           resolve();
-        }, 20);
+        }, 100);
       });
     });
   });
@@ -288,35 +288,27 @@ describe('PatternFly Accordion Component Tests', function () {
     var newToggle = document.createElement('a');
     newToggle.setAttribute('data-toggle', 'collapse');
     accordionHeading.appendChild(newToggle);
-
-    return addElementToBody(accordion).then(function () {
-
-      expect(accordionHeading._toggle).toBeDefined();
-      accordionHeading.removeChild(accordionHeadingToggle);
-
-      return new Promise(function (resolve) {
-        setTimeout(function () {
-          expect(accordionHeading._toggle).toBe(newToggle);
-          resolve();
-        }, 100);
+    return addElementToBody(accordion)
+      .then(function () {
+        expect(accordionHeading._toggle).toBeDefined();
+        return removeChild(accordionHeading, accordionHeadingToggle);
+      }).then(function () {
+        expect(accordionHeading._toggle).toBe(newToggle);
       });
-    });
   });
 
   it('picks the toggle when added after initialization', function () {
     var newToggle = document.createElement('a');
     newToggle.setAttribute('data-toggle', 'collapse');
-    accordionHeading.removeChild(accordionHeadingToggle);
-    return addElementToBody(accordion).then(function () {
-      expect(accordionHeading._toggle).toBe(null);
-      accordionHeading.appendChild(newToggle);
-      return new Promise(function (resolve) {
-        setTimeout(function () {
-          expect(accordionHeading._toggle).toBe(newToggle);
-          resolve();
-        }, 200);
+    return removeChild(accordionHeading, accordionHeadingToggle)
+      .then(function () {
+        return addElementToBody(accordion);
+      }).then(function () {
+        expect(accordionHeading._toggle).toBe(null);
+        return addChild(accordionHeading, newToggle);
+      }).then(function () {
+        expect(accordionHeading._toggle).toBe(newToggle);
       });
-    });
   });
 
   it('allows to add new panels after initialization', function () {
@@ -333,12 +325,7 @@ describe('PatternFly Accordion Component Tests', function () {
     return addElementToBody(accordion).then(function () {
       return removeChild(accordion, accordionPanel2);
     }).then(function () {
-      return new Promise(function (resolve) {
-        setTimeout(function () {
-          expect(accordionPanel2.parentNode).toBe(null);
-          resolve();
-        }, 100);
-      });
+      expect(accordionPanel2.parentNode).toBe(null);
     });
   });
 });
