@@ -97,6 +97,11 @@ export class PfAccordion extends HTMLElement {
               }
             }
           }
+
+          // fixed height needs to be recalculated on DOM initialization
+          if (this.hasAttribute('fixedheight')) {
+            this._setFixedHeight();
+          }
         }
       });
     });
@@ -191,7 +196,7 @@ export class PfAccordion extends HTMLElement {
   _setFixedHeight() {
     let height = this.clientHeight;
 
-    // Close any open panel
+    // Close any open panels
     let openPanels = this.querySelectorAll('.collapse.in');
 
     Array.prototype.forEach.call(openPanels, (openPanel) => {
@@ -208,9 +213,9 @@ export class PfAccordion extends HTMLElement {
     let bodyHeight = this.clientHeight - contentHeight;
 
     // show scrollbars when content height > element height,
-    if (bodyHeight < 0) {
-      bodyHeight = this.clientHeight;
-    }
+    // if (bodyHeight < 0) {
+    //   bodyHeight = this.clientHeight;
+    // }
 
     // Make sure we have enough height to be able to scroll the contents if necessary
     if (bodyHeight < 25) {
@@ -241,7 +246,7 @@ export class PfAccordion extends HTMLElement {
       this._oldStyle = {
         overflowY: this.style.overflowY
       };
-      this.style.overflowY = 'auto';
+      this.style.overflowY = 'fixed';
 
       if (!this._initialized) {
         // first time run, send an initialized event
@@ -282,7 +287,8 @@ export class PfAccordion extends HTMLElement {
     if (this._fixedHeight) {
       return;
     }
-    this._setFixedHeight();
+
+    requestAnimationFrame(() => this._setFixedHeight() );
     // Update on window resizing
     this._fixedHeightListener = this._setFixedHeight.bind(this);
     window.addEventListener('resize', this._fixedHeightListener);
