@@ -58,11 +58,12 @@ export class PfAccordion extends HTMLElement {
     this.setAttribute('role', 'tablist');
     this.setAttribute('aria-multiselectable', 'true');
 
-    let nodes = this.querySelectorAll('pf-accordion-panel > pf-accordion-template');
-    if (nodes) {
-      Array.prototype.forEach.call(nodes, ((panel) => {
+    let panels = this.querySelectorAll('pf-accordion-panel > pf-accordion-template');
+    if (panels) {
+      for (let i = 0; i < panels.length; i++) {
+        let panel = panels[i];
         this._checkAndAddPanel(panel);
-      }));
+      }
     }
 
     // catch bubbled events
@@ -70,22 +71,25 @@ export class PfAccordion extends HTMLElement {
     this.addEventListener('pf-accordion.collapsing', this._handlePanelHidden);
 
     this._observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutationRecord) => {
-        if ('childList' === mutationRecord.type) {
+      for (let i = 0; i < mutations.length; i++) {
+        let mutation = mutations[i];
+        if ('childList' === mutation.type) {
 
           // handle dynamic addition of panels
-          for (let i = 0; i < mutationRecord.addedNodes.length; i++) {
-            let node = mutationRecord.addedNodes[i];
+          for (let i = 0; i < mutation.addedNodes.length; i++) {
+            let node = mutation.addedNodes[i];
             // only check for element nodes
             if (1 === node.nodeType && 'pf-accordion-panel' === node.tagName.toLowerCase()) {
               let panel = node.querySelector('pf-accordion-template');
-              this._checkAndAddPanel(panel);
+              if (null !== panel) {
+                this._checkAndAddPanel(panel);
+              }
             }
           }
 
           // handle removal of panels
-          for (let i = 0; i < mutationRecord.removedNodes.length; i++) {
-            let node = mutationRecord.removedNodes[i];
+          for (let i = 0; i < mutation.removedNodes.length; i++) {
+            let node = mutation.removedNodes[i];
             // only check for element nodes
             if (1 === node.nodeType && 'pf-accordion-panel' === node.tagName.toLowerCase()) {
               let panel = node.querySelector('pf-accordion-template');
@@ -103,7 +107,7 @@ export class PfAccordion extends HTMLElement {
             this._setFixedHeight();
           }
         }
-      });
+      }
     });
 
     this._observer.observe(this, {
@@ -199,15 +203,17 @@ export class PfAccordion extends HTMLElement {
     // Close any open panels
     let openPanels = this.querySelectorAll('.collapse.in');
 
-    Array.prototype.forEach.call(openPanels, (openPanel) => {
-      openPanel.classList.remove('in');
-    });
+    for (let i = 0; i < openPanels.length; i++) {
+      let panel = openPanels[i];
+      panel.classList.remove('in');
+    }
 
     // Determine the necessary height for the closed content
     let contentHeight = 0;
-    Array.prototype.forEach.call(this.children, (element) => {
+    for (let i = 0; i < this.children.length; i++) {
+      let element = this.children[i];
       contentHeight += element.offsetHeight;
-    });
+    }
 
     // Determine the height remaining for opened collapse panels
     let bodyHeight = this.clientHeight - contentHeight;
@@ -223,15 +229,17 @@ export class PfAccordion extends HTMLElement {
     }
 
     // Reopen the initially opened panel
-    Array.prototype.forEach.call(openPanels, (openPanel) => {
-      openPanel.classList.add('in');
-    });
+    for (let i = 0; i < openPanels.length; i++) {
+      let panel = openPanels[i];
+      panel.classList.add('in');
+    }
 
     // run as requestAnimationFrame to prevent performance issues while resizing
     requestAnimationFrame(() => {
       // Set the max-height for the collapse panels
       let panels = this.getElementsByTagName('pf-accordion-template');
-      Array.prototype.forEach.call(panels, (element) => {
+      for (let i = 0; i < panels.length; i++) {
+        let element = panels[i];
         // Set the max-height and vertical scroll of the scroll element
         if (!element._oldStyle) {
           element._oldStyle = {
@@ -241,7 +249,7 @@ export class PfAccordion extends HTMLElement {
         }
         element.style.maxHeight = bodyHeight + 'px';
         element.style.overflowY = 'auto';
-      });
+      }
 
       this._oldStyle = {
         overflowY: this.style.overflowY
@@ -264,7 +272,8 @@ export class PfAccordion extends HTMLElement {
       return;
     }
     let panels = this.getElementsByTagName('pf-accordion-template');
-    Array.prototype.forEach.call(panels, (element) => {
+    for (let i = 0; i < panels.length; i++) {
+      let element = panels[i];
 
       // Set the max-height and vertical scroll of the scroll element
       if (element._oldStyle) {
@@ -272,7 +281,7 @@ export class PfAccordion extends HTMLElement {
         element.style.overflowY = element._oldStyle.overflowY;
         element._oldStyle = null;
       }
-    });
+    }
     this.style.overflowY = this._oldStyle.overflowY;
     this._oldStyle = null;
     window.removeEventListener('resize', this._fixedHeihtListener);
@@ -288,7 +297,7 @@ export class PfAccordion extends HTMLElement {
       return;
     }
 
-    requestAnimationFrame(() => this._setFixedHeight() );
+    requestAnimationFrame(() => this._setFixedHeight());
     // Update on window resizing
     this._fixedHeightListener = this._setFixedHeight.bind(this);
     window.addEventListener('resize', this._fixedHeightListener);

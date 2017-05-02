@@ -1,8 +1,7 @@
 /* Require the HTML Element Shim */
 require('./customElementShim.js');
 
-/* Wait for polyfill loading */
-document.addEventListener('WebComponentsReady', () => {
+let load = function () {
   /** PF Accordion Component **/
   require('pf-accordion.component.js');
 
@@ -48,4 +47,17 @@ document.addEventListener('WebComponentsReady', () => {
   /** PF Popover **/
   require('pf-popover.component.js');
 
-});
+};
+
+/* Wait for polyfill loading */
+let webComponentsSupported = (
+  'registerElement' in document &&
+  'import' in document.createElement('link') &&
+  'content' in document.createElement('template')
+);
+
+if (!webComponentsSupported) {
+  document.addEventListener('WebComponentsReady', load);
+} else {
+  load();
+}
