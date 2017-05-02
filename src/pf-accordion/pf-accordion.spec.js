@@ -22,16 +22,17 @@ describe('PatternFly Accordion Component Tests', function () {
   function removeChild(parent, element) {
     var promise = new Promise(function (resolve) {
       var observer = new MutationObserver(function (mutations) {
-        Array.prototype.forEach.call(mutations, function (mutationRecord) {
-          var i;
-          for (i = 0; i < mutationRecord.removedNodes.length; i++) {
-            if (element === mutationRecord.removedNodes[i]) {
+        var i, j, mutation;
+        for (i = 0; i < mutations.length; i++) {
+          mutation = mutations[i];
+          for (j = 0; j < mutation.removedNodes.length; j++) {
+            if (element === mutation.removedNodes[j]) {
               observer.disconnect();
               resolve();
               break;
             }
           }
-        });
+        }
       });
       var config = {
         attributes: true,
