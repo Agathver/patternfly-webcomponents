@@ -94,10 +94,7 @@ export class PfAccordion extends HTMLElement {
             if (1 === node.nodeType && 'pf-accordion-panel' === node.tagName.toLowerCase()) {
               let panel = node.querySelector('pf-accordion-template');
               if (null !== panel) {
-                let index = this._openPanels.indexOf(panel);
-                if (index > -1) {
-                  this._openPanels.splice(index, 1);
-                }
+                this._checkAndRemovePanel(panel);
               }
             }
           }
@@ -139,6 +136,18 @@ export class PfAccordion extends HTMLElement {
           this._openPanels.push(panel);
         }
       });
+    }
+  }
+
+  /**
+   * Check and remove a panel if it is in the array of open panels
+   * @private
+   * @param {PfAccordionTemplate} panel the toggle pane;
+   */
+  _checkAndRemovePanel(panel) {
+    let index = this._openPanels.indexOf(panel);
+    if (index > -1) {
+      this._openPanels.splice(index, 1);
     }
   }
 
@@ -265,6 +274,7 @@ export class PfAccordion extends HTMLElement {
   }
 
   /**
+   * Removes the fixed-height panel configuration
    * @private
    */
   _unsetFixedHeight() {
