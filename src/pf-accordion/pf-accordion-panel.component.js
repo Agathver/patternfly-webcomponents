@@ -47,7 +47,7 @@ export class PfAccordionPanel extends HTMLElement {
   _initDefaults() {
     this._classes = {
       'context': {
-        'classes': ['panel-default', 'panel-primary', 'panel-warning', 'panel-success', 'panel-danger'],
+        'classes': ['panel-default', 'panel-info', 'panel-success', 'panel-primary', 'panel-warning', 'panel-danger'],
         'default': 'panel-default'
       }
     };
