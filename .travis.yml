@@ -1,6 +1,17 @@
+dist: trusty
+sudo: false
+
 language: node_js
 node_js:
-  - '4'
+  - '6'
+
+branches:
+  except:
+    - /^.*-dist$/
+
+cache:
+  directories:
+    - node_modules
 
 env:
   global:
