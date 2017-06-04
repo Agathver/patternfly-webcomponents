@@ -18,7 +18,7 @@ export class PfAccordionTemplate extends HTMLElement {
   /**
    * Called when an instance was inserted into the document
    */
-  attachedCallback() {
+  connectedCallback() {
     this.classList.add('panel-collapse');
     this.classList.add('collapse');
     this.setAttribute('role', 'tabpanel');
@@ -39,7 +39,8 @@ export class PfAccordionTemplate extends HTMLElement {
   /**
    * Called when an instance of the element is created
    */
-  createdCallback() {
+  constructor() {
+    super();
     this._initialized = false;
   }
 
@@ -180,5 +181,5 @@ export class PfAccordionTemplate extends HTMLElement {
 }
 
 (function () {
-  document.registerElement('pf-accordion-template', PfAccordionTemplate);
+  customElements.define('pf-accordion-template', PfAccordionTemplate);
 }());

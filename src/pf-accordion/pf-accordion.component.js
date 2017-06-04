@@ -45,7 +45,8 @@ export class PfAccordion extends HTMLElement {
   /**
    * Called when an instance of the element is created
    */
-  createdCallback() {
+  constructor() {
+    super();
     this._openPanels = [];
     this._fixedHeight = false;
   }
@@ -53,7 +54,7 @@ export class PfAccordion extends HTMLElement {
   /**
    * Called when an instance was inserted into the document
    */
-  attachedCallback() {
+  connectedCallback() {
     this.classList.add('panel-group');
     this.setAttribute('role', 'tablist');
     this.setAttribute('aria-multiselectable', 'true');
@@ -179,7 +180,7 @@ export class PfAccordion extends HTMLElement {
   /**
    * Called when the element is removed from the DOM
    */
-  detachedCallback() {
+  disconnectedCallback() {
     this._observer.disconnect();
     window.removeEventListener('resize', this._fixedHeightListener);
   }
@@ -330,5 +331,5 @@ export class PfAccordion extends HTMLElement {
 }
 
 (function () {
-  document.registerElement('pf-accordion', PfAccordion);
+  customElements.define('pf-accordion', PfAccordion);
 }());

@@ -8,14 +8,15 @@ export class PfAccordionPanel extends HTMLElement {
   /**
    * Called when an instance of the element is created
    */
-  createdCallback() {
+  constructor() {
+    super();
     this._initDefaults();
   }
 
   /**
    * Called when an instance of the element was inserted into the document
    */
-  attachedCallback() {
+  connectedCallback() {
     this._setClasses();
   }
 
@@ -74,5 +75,5 @@ export class PfAccordionPanel extends HTMLElement {
   }
 }
 (function () {
-  document.registerElement('pf-accordion-panel', PfAccordionPanel);
+  customElements.define('pf-accordion-panel', PfAccordionPanel);
 }());
