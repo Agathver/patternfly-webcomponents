@@ -51,7 +51,7 @@ let load = function () {
 
 /* Wait for polyfill loading */
 let webComponentsSupported = (
-  'registerElement' in document &&
+  'customElements' in window &&
   'import' in document.createElement('link') &&
   'content' in document.createElement('template')
 );
