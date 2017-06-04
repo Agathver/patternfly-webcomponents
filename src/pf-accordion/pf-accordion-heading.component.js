@@ -6,7 +6,7 @@ export class PfAccordionHeading extends HTMLElement {
   /**
    * Called when an instance was inserted into the document
    */
-  attachedCallback() {
+  connctedCallback() {
     this.classList.add('panel-heading');
     this.setAttribute('role', 'tab');
 
@@ -124,10 +124,10 @@ export class PfAccordionHeading extends HTMLElement {
   /**
    * Called when the element is removed from the DOM
    */
-  detachedCallback() {
+  disconnectedCallback() {
     this._observer.disconnect();
   }
 }
 (function () {
-  document.registerElement('pf-accordion-heading', PfAccordionHeading);
+  customElements.define('pf-accordion-heading', PfAccordionHeading);
 }());
