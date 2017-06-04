@@ -15,6 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'node_modules/@webcomponents/custom-elements/src/native-shim.js',
       'node_modules/babel-polyfill/dist/polyfill.js',
       'node_modules/promise-polyfill/promise.js',
       'node_modules/jasmine-promises/dist/jasmine-promises.js',
@@ -67,13 +68,8 @@ module.exports = function(config) {
       HeadlessChrome: {
         base: 'Chrome',
         flags: ['--no-sandbox', '--headless', '--disable-gpu', ' --remote-debugging-port=9222']
-      },
-      Chrome_travis_ci: {
-        base: 'Chrome',
-        flags: ['--no-sandbox']
       }
     },
-
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -83,12 +79,6 @@ module.exports = function(config) {
     // how many browser should be started simultaneous
     concurrency: Infinity
   };
-
-  if (process.env.TRAVIS) {
-    configuration.browsers = ['Chrome_travis_ci'];
-  } else {
-    configuration.files.unshift('node_modules/@webcomponents/custom-elements/src/native-shim.js');
-  }
 
   config.set(configuration);
 };
