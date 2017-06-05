@@ -19,6 +19,7 @@ env:
     - COMMIT_AUTHOR_EMAIL: "patternfly-build@redhat.com"
     - TRIGGER_REPO_SLUG: "patternfly-webcomponents/patternfly-webcomponents"
     - TRIGGER_REPO_BRANCH: "master"
+    - CHROME_BIN: '/opt/google/chrome/google-chrome'
 
 before_install:
   - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
