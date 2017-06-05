@@ -64,6 +64,24 @@ class PfUtil {
       x: window.pageXOffset || document.documentElement.scrollLeft
     };
   }
+
+  getMaxHeight (parent) { // get collapse trueHeight and border
+    let parentHeight = 0;
+    for (let k = 0, ll = parent.children.length; k < ll; k++) {
+      parentHeight += parent.children[k].offsetHeight;
+    }
+    return parentHeight;
+  }
+  once (element, event, handler, context) {
+    let ephemeralHandler = function (e) {
+      try {
+        handler.call(context || this, e);
+      } finally {
+        element.removeEventListener(event, ephemeralHandler);
+      }
+    };
+    element.addEventListener(event, ephemeralHandler);
+  }
 }
 let pfUtil = new PfUtil();
 export {pfUtil};
