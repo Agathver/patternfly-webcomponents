@@ -3,15 +3,12 @@
  *
  */
 export class PfAccordionHeading extends HTMLElement {
+
   /**
-   * Called when an instance was inserted into the document
+   * Called when an instance of the element is created
    */
-  connctedCallback() {
-    this.classList.add('panel-heading');
-    this.setAttribute('role', 'tab');
-
-    this._findTarget();
-
+  constructor() {
+    super();
     this._observer = new MutationObserver((mutations) => {
       mutations.forEach((record) => {
         // detach handlers on toggle removal, try to get another toggle
@@ -39,6 +36,15 @@ export class PfAccordionHeading extends HTMLElement {
         }
       });
     });
+  }
+  /**
+   * Called when an instance was inserted into the document
+   */
+  connectedCallback() {
+    this.classList.add('panel-heading');
+    this.setAttribute('role', 'tab');
+
+    this._findTarget();
 
     this._observer.observe(this, {
       childList: true,
