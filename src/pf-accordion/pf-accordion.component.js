@@ -47,29 +47,9 @@ export class PfAccordion extends HTMLElement {
    */
   constructor() {
     super();
+    this._initialized = false;
     this._openPanels = [];
     this._fixedHeight = false;
-  }
-
-  /**
-   * Called when an instance was inserted into the document
-   */
-  connectedCallback() {
-    this.classList.add('panel-group');
-    this.setAttribute('role', 'tablist');
-    this.setAttribute('aria-multiselectable', 'true');
-
-    let panels = this.querySelectorAll('pf-accordion-panel > pf-accordion-template');
-    if (panels) {
-      for (let i = 0; i < panels.length; i++) {
-        let panel = panels[i];
-        this._checkAndAddPanel(panel);
-      }
-    }
-
-    // catch bubbled events
-    this.addEventListener('pf-accordion.expanding', this._handlePanelShown);
-    this.addEventListener('pf-accordion.collapsing', this._handlePanelHidden);
 
     this._observer = new MutationObserver((mutations) => {
       for (let i = 0; i < mutations.length; i++) {
@@ -107,6 +87,27 @@ export class PfAccordion extends HTMLElement {
         }
       }
     });
+  }
+
+  /**
+   * Called when an instance was inserted into the document
+   */
+  connectedCallback() {
+    this.classList.add('panel-group');
+    this.setAttribute('role', 'tablist');
+    this.setAttribute('aria-multiselectable', 'true');
+
+    let panels = this.querySelectorAll('pf-accordion-panel > pf-accordion-template');
+    if (panels) {
+      for (let i = 0; i < panels.length; i++) {
+        let panel = panels[i];
+        this._checkAndAddPanel(panel);
+      }
+    }
+
+    // catch bubbled events
+    this.addEventListener('pf-accordion.expanding', this._handlePanelShown);
+    this.addEventListener('pf-accordion.collapsing', this._handlePanelHidden);
 
     this._observer.observe(this, {
       childList: true
