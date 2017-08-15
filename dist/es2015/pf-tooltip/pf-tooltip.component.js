@@ -25,14 +25,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * <b>&lt;pf-tooltip&gt;</b> element for Patternfly Web Components
  *
  * @example {@lang xml}
- * <pf-tooltip animation="fade" targetSelector="#btn-left" placement="left" delay="100" duration="150" containerSelector="#container"></pf-alert>
+ * <pf-tooltip animation="fade" target-selector="#btn-left" placement="left" delay="100" duration="150" container-selector="#container"></pf-alert>
  *
  * @prop {string} animation the animation class
- * @prop {string} targetSelector the target element selector
+ * @prop {string} target-selector the target element selector
  * @prop {string} placement left, right, top, bottom
  * @prop {number} delay animation delay (ms)
  * @prop {number} duration animation duration (ms)
- * @prop {string} containerSelector the container element selector
+ * @prop {string} container-selector the container element selector
  */
 
 var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
@@ -51,7 +51,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
       this.element = this;
       this.content = this._innerHtml || this.element.innerHTML;
       this.tooltip = null;
-      this._targetSelector = this.getAttribute('targetSelector');
+      this._targetSelector = this.getAttribute('target-selector');
       this._target = this._targetSelector ? document.querySelector(this._targetSelector) : this;
       this._animation = this.getAttribute('animation') ? this.getAttribute('animation') : 'fade';
       this._placement = this.getAttribute('placement') ? this.getAttribute('placement') : 'right';
@@ -59,7 +59,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
       this._mouseHover = 'onmouseleave' in document ? ['mouseenter', 'mouseleave'] : ['mouseover', 'mouseout'];
       this._tipPositions = /\b(top|bottom|left|top)+/;
       this._duration = _pfUtils.pfUtil.isMSIE && _pfUtils.pfUtil.isMSIE < 10 ? 0 : parseInt(this.getAttribute('duration')) || 150;
-      this._containerSelector = this.getAttribute('containerSelector');
+      this._containerSelector = this.getAttribute('container-selector');
       this._container = this._containerSelector ? document.querySelector(this._containerSelector) : document.body;
 
       if (this._target) {
@@ -87,7 +87,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
       this.init();
 
       //handleContentChanged
-      this.element.addEventListener('handleContentChanged', function (e) {
+      this.element.addEventListener('pf-tooltip.handleContentChanged', function (e) {
         _this3.init();
       }, false);
     }
@@ -118,7 +118,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
   }], [{
     key: 'observedAttributes',
     get: function get() {
-      return ['animation', 'targetSelector', 'placement', 'delay', 'duration', 'containerSelector'];
+      return ['animation', 'target-selector', 'placement', 'delay', 'duration', 'container-selector'];
     }
   }]);
 
@@ -143,7 +143,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
     key: 'setInnerHtml',
     value: function setInnerHtml(html) {
       this._innerHtml = html;
-      this.element.dispatchEvent(new CustomEvent('handleContentChanged', {}));
+      this.element.dispatchEvent(new CustomEvent('pf-tooltip.handleContentChanged', {}));
     }
 
     /**
@@ -167,9 +167,10 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
         if (_this4.tooltip === null) {
           _this4._createTooltip();
           _this4._styleTooltip();
+          _this4._checkPlacement();
           _this4._showTooltip();
           //notify frameworks
-          _this4.dispatchEvent(new CustomEvent('tooltipOpened', {}));
+          _this4.dispatchEvent(new CustomEvent('pf-tooltip.opened', {}));
         }
       }, 20);
     }
@@ -190,7 +191,9 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
           setTimeout(function () {
             _this5._removeTooltip();
             //notify frameworks
-            _this5.dispatchEvent(new CustomEvent('tooltipClosed', {}));
+            _this5.dispatchEvent(new CustomEvent('pf-tooltip.closed', {}));
+            // reset position after tooltip is closed
+            _this5._placement = _this5.getAttribute('placement') ? _this5.getAttribute('placement') : 'right';
           }, _this5._duration);
         }
       }, this._delay + this._duration);
@@ -232,6 +235,27 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
     }
 
     /**
+     * update the placement of tooltip
+     */
+
+  }, {
+    key: '_updatePlacement',
+    value: function _updatePlacement() {
+      switch (this._placement) {
+        case 'top':
+          return 'bottom';
+        case 'bottom':
+          return 'top';
+        case 'left':
+          return 'right';
+        case 'right':
+          return 'left';
+        default:
+          return this._placement;
+      }
+    }
+
+    /**
      * Styles the tooltip based on placement attribute
      * @private
      */
@@ -267,6 +291,21 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
         this.tooltip.style.top = rect.top + scroll.y - tooltipDimensions.h / 2 + linkDimensions.h / 2 + 'px';
         this.tooltip.style.left = rect.left + scroll.x + linkDimensions.w + 'px';
       }
+
+      this.tooltip.className.indexOf(this._placement) === -1 && (this.tooltip.className = this.tooltip.className.replace(/\b(top|bottom|left|right)+/, this._placement));
+    }
+
+    /**
+     * check the placement of tooltip
+     */
+
+  }, {
+    key: '_checkPlacement',
+    value: function _checkPlacement() {
+      if (!_pfUtils.pfUtil.isElementInViewport(this.tooltip)) {
+        this._placement = this._updatePlacement();
+        this._styleTooltip();
+      }
     }
 
     /**
@@ -299,7 +338,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
     }
 
     /**
-     * Get the tooltip containerSelector
+     * Get the tooltip container-selector
      *
      * @returns {string} The container element selector
      */
@@ -311,7 +350,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
     }
 
     /**
-     * Set the tooltip containerSelector
+     * Set the tooltip container-selector
      *
      * @param {string} value The container element selector
      */
@@ -320,7 +359,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
       if (this._containerSelector !== value) {
         this._containerSelector = value;
         this._container = document.querySelector(this._containerSelector);
-        this.setAttribute('containerSelector', value);
+        this.setAttribute('container-selector', value);
       }
     }
 
@@ -400,7 +439,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
     }
 
     /**
-     * Get the targetSelector
+     * Get the target-selector
      *
      * @returns {string} The target element selector
      */
@@ -412,7 +451,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
     }
 
     /**
-     * Set targetSelector
+     * Set target-selector
      *
      * @param {string} value The target element selector
      */
@@ -421,7 +460,7 @@ var PfTooltip = exports.PfTooltip = function (_HTMLElement) {
       if (this._targetSelector !== value) {
         this._targetSelector = value;
         this._target = document.querySelector(this._targetSelector);
-        this.setAttribute('targetSelector', value);
+        this.setAttribute('target-selector', value);
       }
     }
   }]);

@@ -7,6 +7,7 @@ module.exports = {
 
   entry: {
     'patternfly': './src/patternfly',
+    'pf-accordion': './src/pf-accordion/index',
     'pf-alert': './src/pf-alert/index',
     'pf-i18n': './src/pf-i18n/index',
     'pf-hello': './src/pf-hello/index',
@@ -19,11 +20,14 @@ module.exports = {
     'pf-touchspin': './src/pf-touchspin/index',
     'pf-utilization-bar-chart': './src/pf-utilization-bar-chart/index',
     'pf-modal': './src/pf-modal/index',
-    'pf-utils': './src/pf-utils/index'
+    'pf-popover': './src/pf-popover/index',
+    'pf-utils': './src/pf-utils/index',
+    'index': './src/index'
   },
 
   resolve: {
-    root: [
+    modules: [
+      path.join(__dirname, "src/pf-accordion"),
       path.join(__dirname, "src/pf-alert"),
       path.join(__dirname, "src/pf-hello"),
       path.join(__dirname, "src/pf-i18n"),
@@ -36,6 +40,7 @@ module.exports = {
       path.join(__dirname, "src/pf-touchspin"),
       path.join(__dirname, "src/pf-utilization-bar-chart"),
       path.join(__dirname, "src/pf-modal"),
+      path.join(__dirname, "src/pf-popover"),
       path.join(__dirname, "src/pf-utils")
     ]
   },
@@ -53,14 +58,16 @@ module.exports = {
   ],
 
   module: {
-    loaders: [
+    rules: [
       //js loader
       {
-        loader: "babel",
-
-        // Options to configure babel with
-        query: {
-          presets: ['es2015']
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['es2015']
+          }
         }
       }
     ]

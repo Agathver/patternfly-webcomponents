@@ -32,10 +32,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  *
  * @example {@lang xml}
  * <pf-tabs>
- *  <pf-tab tabTitle="Tab1" active="true">
+ *  <pf-tab tab-title="Tab1" active="true">
  *    <p>Tab1 content here</p>
  *  </pf-tab>
- *  <pf-tab tabTitle="Tab2">
+ *  <pf-tab tab-title="Tab2">
  *    <p>Tab2 content here</p>
  *  </pf-tab>
  * </pf-tabs>
@@ -51,19 +51,22 @@ var PfTabs = exports.PfTabs = function (_HTMLElement) {
      * Called every time the element is inserted into the DOM
      */
     value: function connectedCallback() {
-      this.insertBefore(this._tabsTemplate.content, this.firstChild);
+      if (!this._initialized) {
+        this.insertBefore(this._tabsTemplate.content, this.firstChild);
 
-      this._makeTabsFromPfTab();
+        this._makeTabsFromPfTab();
 
-      this.querySelector('ul').addEventListener('click', this);
+        this.querySelector('ul').addEventListener('click', this);
 
-      // Add the ul class if specified
-      this.querySelector('ul').className = this.attributes.class ? this.attributes.class.value : 'nav nav-tabs';
+        // Add the ul class if specified
+        this.querySelector('ul').className = this.attributes.class ? this.attributes.class.value : 'nav nav-tabs';
 
-      if (!this.mutationObserver) {
-        this.mutationObserver = new MutationObserver(this._handleMutations.bind(this));
-        this.mutationObserver.observe(this, { childList: true, attributes: true });
+        if (!this.mutationObserver) {
+          this.mutationObserver = new MutationObserver(this._handleMutations.bind(this));
+          this.mutationObserver.observe(this, { childList: true, attributes: true });
+        }
       }
+      this._initialized = true;
     }
 
     /*
@@ -363,7 +366,7 @@ var PfTabs = exports.PfTabs = function (_HTMLElement) {
       }.bind(this));
 
       //dispatch the custom 'tabChanged' event for framework listeners
-      this.dispatchEvent(new CustomEvent('tabChanged', { detail: activeTabTitle }));
+      this.dispatchEvent(new CustomEvent('pf-tabs.tabChanged', { detail: activeTabTitle }));
     }
   }]);
 

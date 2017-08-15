@@ -5,14 +5,14 @@ import {pfUtil} from 'pf-utils.js';
  * <b>&lt;pf-tooltip&gt;</b> element for Patternfly Web Components
  *
  * @example {@lang xml}
- * <pf-tooltip animation="fade" targetSelector="#btn-left" placement="left" delay="100" duration="150" containerSelector="#container"></pf-alert>
+ * <pf-tooltip animation="fade" target-selector="#btn-left" placement="left" delay="100" duration="150" container-selector="#container"></pf-alert>
  *
  * @prop {string} animation the animation class
- * @prop {string} targetSelector the target element selector
+ * @prop {string} target-selector the target element selector
  * @prop {string} placement left, right, top, bottom
  * @prop {number} delay animation delay (ms)
  * @prop {number} duration animation duration (ms)
- * @prop {string} containerSelector the container element selector
+ * @prop {string} container-selector the container element selector
  */
 
 export class PfTooltip extends HTMLElement {
@@ -24,7 +24,7 @@ export class PfTooltip extends HTMLElement {
     this.element = this;
     this.content = this._innerHtml || this.element.innerHTML;
     this.tooltip = null;
-    this._targetSelector = this.getAttribute('targetSelector');
+    this._targetSelector = this.getAttribute('target-selector');
     this._target = this._targetSelector ? document.querySelector(this._targetSelector) : this;
     this._animation = this.getAttribute('animation') ? this.getAttribute('animation') : 'fade';
     this._placement = this.getAttribute('placement') ? this.getAttribute('placement') : 'right';
@@ -32,7 +32,7 @@ export class PfTooltip extends HTMLElement {
     this._mouseHover = ('onmouseleave' in document) ? [ 'mouseenter', 'mouseleave'] : [ 'mouseover', 'mouseout' ];
     this._tipPositions = /\b(top|bottom|left|top)+/;
     this._duration = pfUtil.isMSIE && pfUtil.isMSIE < 10 ? 0 : (parseInt(this.getAttribute('duration')) || 150);
-    this._containerSelector = this.getAttribute('containerSelector');
+    this._containerSelector = this.getAttribute('container-selector');
     this._container = this._containerSelector ? document.querySelector(this._containerSelector) : document.body;
 
     if (this._target) {
@@ -55,7 +55,7 @@ export class PfTooltip extends HTMLElement {
     this.init();
 
     //handleContentChanged
-    this.element.addEventListener('handleContentChanged', (e) => {
+    this.element.addEventListener('pf-tooltip.handleContentChanged', (e) => {
       this.init();
     }, false);
   }
@@ -64,7 +64,7 @@ export class PfTooltip extends HTMLElement {
    * Only attributes listed in the observedAttributes property will receive this callback
    */
   static get observedAttributes() {
-    return ['animation', 'targetSelector', 'placement', 'delay', 'duration', 'containerSelector'];
+    return ['animation', 'target-selector', 'placement', 'delay', 'duration', 'container-selector'];
   }
 
   /**
@@ -94,7 +94,7 @@ export class PfTooltip extends HTMLElement {
    */
   setInnerHtml(html) {
     this._innerHtml = html;
-    this.element.dispatchEvent(new CustomEvent('handleContentChanged', {}));
+    this.element.dispatchEvent(new CustomEvent('pf-tooltip.handleContentChanged', {}));
   }
 
   /**
@@ -119,7 +119,7 @@ export class PfTooltip extends HTMLElement {
   }
 
   /**
-   * Get the tooltip containerSelector
+   * Get the tooltip container-selector
    *
    * @returns {string} The container element selector
    */
@@ -128,7 +128,7 @@ export class PfTooltip extends HTMLElement {
   }
 
   /**
-   * Set the tooltip containerSelector
+   * Set the tooltip container-selector
    *
    * @param {string} value The container element selector
    */
@@ -136,7 +136,7 @@ export class PfTooltip extends HTMLElement {
     if (this._containerSelector !== value) {
       this._containerSelector = value;
       this._container = document.querySelector(this._containerSelector);
-      this.setAttribute('containerSelector', value);
+      this.setAttribute('container-selector', value);
     }
   }
 
@@ -204,7 +204,7 @@ export class PfTooltip extends HTMLElement {
   }
 
   /**
-   * Get the targetSelector
+   * Get the target-selector
    *
    * @returns {string} The target element selector
    */
@@ -213,7 +213,7 @@ export class PfTooltip extends HTMLElement {
   }
 
   /**
-   * Set targetSelector
+   * Set target-selector
    *
    * @param {string} value The target element selector
    */
@@ -221,7 +221,7 @@ export class PfTooltip extends HTMLElement {
     if (this._targetSelector !== value) {
       this._targetSelector = value;
       this._target = document.querySelector(this._targetSelector);
-      this.setAttribute('targetSelector', value);
+      this.setAttribute('target-selector', value);
     }
   }
 
@@ -234,9 +234,10 @@ export class PfTooltip extends HTMLElement {
       if (this.tooltip === null) {
         this._createTooltip();
         this._styleTooltip();
+        this._checkPlacement();
         this._showTooltip();
         //notify frameworks
-        this.dispatchEvent(new CustomEvent('tooltipOpened', {}));
+        this.dispatchEvent(new CustomEvent('pf-tooltip.opened', {}));
       }
     }, 20 );
   }
@@ -252,7 +253,9 @@ export class PfTooltip extends HTMLElement {
         setTimeout(() => {
           this._removeTooltip();
           //notify frameworks
-          this.dispatchEvent(new CustomEvent('tooltipClosed', {}));
+          this.dispatchEvent(new CustomEvent('pf-tooltip.closed', {}));
+          // reset position after tooltip is closed
+          this._placement = this.getAttribute('placement') ? this.getAttribute('placement') : 'right';
         }, this._duration);
       }
     }, this._delay + this._duration);
@@ -288,6 +291,24 @@ export class PfTooltip extends HTMLElement {
   }
 
   /**
+   * update the placement of tooltip
+   */
+  _updatePlacement() {
+    switch (this._placement) {
+      case 'top':
+        return 'bottom';
+      case 'bottom':
+        return 'top';
+      case 'left':
+        return 'right';
+      case 'right':
+        return 'left';
+      default:
+        return this._placement;
+    }
+  }
+
+  /**
    * Styles the tooltip based on placement attribute
    * @private
    */
@@ -318,6 +339,18 @@ export class PfTooltip extends HTMLElement {
     } else if ( /right/.test(this._placement) ) { //RIGHT
       this.tooltip.style.top = `${rect.top + scroll.y - tooltipDimensions.h / 2 + linkDimensions.h / 2}px`;
       this.tooltip.style.left = `${rect.left + scroll.x + linkDimensions.w}px`;
+    }
+
+    this.tooltip.className.indexOf(this._placement) === -1 && (this.tooltip.className = this.tooltip.className.replace(/\b(top|bottom|left|right)+/, this._placement));
+  }
+
+  /**
+   * check the placement of tooltip
+   */
+  _checkPlacement() {
+    if (!pfUtil.isElementInViewport(this.tooltip)) {
+      this._placement = this._updatePlacement();
+      this._styleTooltip();
     }
   }
 
