@@ -69,8 +69,7 @@ class PfUtil {
     };
   }
 
-
-  reflow(el) { // force reflow
+  reflow (el) { // force reflow
     return el.offsetHeight;
   }
 
@@ -109,7 +108,4 @@ class PfUtil {
 }
 
 let pfUtil = new PfUtil();
-
-export {
-  pfUtil
-};
+export {pfUtil};
