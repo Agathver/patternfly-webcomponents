@@ -215,7 +215,7 @@ exports.pfUtil = pfUtil;
 
 /***/ }),
 
-/***/ 2:
+/***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -277,7 +277,7 @@ exports.i18n = i18n;
 
 /** PF Utils **/
 __webpack_require__(0);
-__webpack_require__(2);
+__webpack_require__(1);
 
 /***/ })
 

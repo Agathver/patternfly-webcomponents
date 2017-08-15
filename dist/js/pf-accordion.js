@@ -215,7 +215,7 @@ exports.pfUtil = pfUtil;
 
 /***/ }),
 
-/***/ 1:
+/***/ 2:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -228,7 +228,7 @@ exports.PfAccordionTemplate = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _pfAccordionBody = __webpack_require__(6);
+var _pfAccordionBody = __webpack_require__(27);
 
 var _pfAccordionBody2 = _interopRequireDefault(_pfAccordionBody);
 
@@ -444,7 +444,7 @@ var PfAccordionTemplate = exports.PfAccordionTemplate = function (_HTMLElement) 
 
 /***/ }),
 
-/***/ 3:
+/***/ 24:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -457,11 +457,11 @@ exports.PfAccordion = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _pfAccordionPanel = __webpack_require__(4);
+var _pfAccordionPanel = __webpack_require__(25);
 
 var _pfAccordionPanel2 = _interopRequireDefault(_pfAccordionPanel);
 
-var _pfAccordionTemplate = __webpack_require__(1);
+var _pfAccordionTemplate = __webpack_require__(2);
 
 var _pfAccordionTemplate2 = _interopRequireDefault(_pfAccordionTemplate);
 
@@ -787,18 +787,7 @@ var PfAccordion = exports.PfAccordion = function (_HTMLElement) {
 
 /***/ }),
 
-/***/ 37:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/** PF Accordion Component **/
-__webpack_require__(3);
-
-/***/ }),
-
-/***/ 4:
+/***/ 25:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -811,11 +800,11 @@ exports.PfAccordionPanel = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _pfAccordionHeading = __webpack_require__(5);
+var _pfAccordionHeading = __webpack_require__(26);
 
 var _pfAccordionHeading2 = _interopRequireDefault(_pfAccordionHeading);
 
-var _pfAccordionTemplate = __webpack_require__(1);
+var _pfAccordionTemplate = __webpack_require__(2);
 
 var _pfAccordionTemplate2 = _interopRequireDefault(_pfAccordionTemplate);
 
@@ -935,7 +924,7 @@ var PfAccordionPanel = exports.PfAccordionPanel = function (_HTMLElement) {
 
 /***/ }),
 
-/***/ 5:
+/***/ 26:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1129,7 +1118,7 @@ var PfAccordionHeading = exports.PfAccordionHeading = function (_HTMLElement) {
 
 /***/ }),
 
-/***/ 6:
+/***/ 27:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1177,6 +1166,17 @@ var PfAccordionBody = exports.PfAccordionBody = function (_HTMLElement) {
 (function () {
   customElements.define('pf-accordion-body', PfAccordionBody);
 })();
+
+/***/ }),
+
+/***/ 37:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/** PF Accordion Component **/
+__webpack_require__(24);
 
 /***/ })
 

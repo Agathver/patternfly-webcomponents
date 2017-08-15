@@ -215,7 +215,7 @@ exports.pfUtil = pfUtil;
 
 /***/ }),
 
-/***/ 19:
+/***/ 15:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -230,23 +230,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _pfUtils = __webpack_require__(0);
 
-var _pfModalDialog = __webpack_require__(20);
+var _pfModalDialog = __webpack_require__(16);
 
 var _pfModalDialog2 = _interopRequireDefault(_pfModalDialog);
 
-var _pfModalContent = __webpack_require__(21);
+var _pfModalContent = __webpack_require__(17);
 
 var _pfModalContent2 = _interopRequireDefault(_pfModalContent);
 
-var _pfModalHeader = __webpack_require__(22);
+var _pfModalHeader = __webpack_require__(18);
 
 var _pfModalHeader2 = _interopRequireDefault(_pfModalHeader);
 
-var _pfModalBody = __webpack_require__(24);
+var _pfModalBody = __webpack_require__(20);
 
 var _pfModalBody2 = _interopRequireDefault(_pfModalBody);
 
-var _pfModalFooter = __webpack_require__(25);
+var _pfModalFooter = __webpack_require__(21);
 
 var _pfModalFooter2 = _interopRequireDefault(_pfModalFooter);
 
@@ -603,7 +603,7 @@ window.customElements.define('pf-modal', PfModal);
 
 /***/ }),
 
-/***/ 20:
+/***/ 16:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -666,7 +666,7 @@ window.customElements.define('pf-modal-dialog', PfModalDialog);
 
 /***/ }),
 
-/***/ 21:
+/***/ 17:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -729,7 +729,7 @@ window.customElements.define('pf-modal-content', PfModalContent);
 
 /***/ }),
 
-/***/ 22:
+/***/ 18:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -744,7 +744,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _pfUtils = __webpack_require__(0);
 
-var _pfModalHeader = __webpack_require__(23);
+var _pfModalHeader = __webpack_require__(19);
 
 var _pfModalHeader2 = _interopRequireDefault(_pfModalHeader);
 
@@ -878,7 +878,7 @@ window.customElements.define('pf-modal-header', PfModalHeader);
 
 /***/ }),
 
-/***/ 23:
+/***/ 19:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -892,7 +892,7 @@ exports.default = PfModalHeaderTemplate;
 
 /***/ }),
 
-/***/ 24:
+/***/ 20:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -951,7 +951,7 @@ window.customElements.define('pf-modal-body', PfModalBody);
 
 /***/ }),
 
-/***/ 25:
+/***/ 21:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1151,7 +1151,7 @@ window.customElements.define('pf-modal-footer', PfModalFooter);
 
 
 /** PF Tooltip Component **/
-__webpack_require__(19);
+__webpack_require__(15);
 
 /***/ })
 

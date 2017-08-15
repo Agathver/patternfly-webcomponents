@@ -65,7 +65,7 @@
 /************************************************************************/
 /******/ ({
 
-/***/ 26:
+/***/ 22:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -329,7 +329,7 @@ window.customElements.define('pf-dropdown', PfDropdown);
 
 
 /* pf-dropdown webcomponent */
-__webpack_require__(26);
+__webpack_require__(22);
 
 /***/ })
 

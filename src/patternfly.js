@@ -38,26 +38,11 @@ let load = function () {
   /** PF Hello **/
   require('pf-hello.component.js');
 
-  /** PF Dropdown **/
-  require('pf-dropdown.component.js');
+/** PF Touchspin **/
+require('pf-touchspin.component.js');
 
-  /** PF Touchspin **/
-  require('pf-touchspin.component.js')
+/** PF Popover **/
+require('pf-popover.component.js');
 
-  /** PF Popover **/
-  require('pf-popover.component.js');
-
-};
-
-/* Wait for polyfill loading */
-let webComponentsSupported = (
-  'customElements' in window &&
-  'import' in document.createElement('link') &&
-  'content' in document.createElement('template')
-);
-
-if (!webComponentsSupported) {
-  document.addEventListener('WebComponentsReady', load);
-} else {
-  load();
-}
+/** PF Accordion Component **/
+require('pf-accordion.component.js');

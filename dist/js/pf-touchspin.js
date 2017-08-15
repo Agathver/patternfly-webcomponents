@@ -65,7 +65,7 @@
 /************************************************************************/
 /******/ ({
 
-/***/ 27:
+/***/ 23:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -538,7 +538,7 @@ window.customElements.define('pf-touchspin', PfTouchspin);
 
 
 /* pf-touchspin webcomponent */
-__webpack_require__(27);
+__webpack_require__(23);
 
 /***/ })
 
