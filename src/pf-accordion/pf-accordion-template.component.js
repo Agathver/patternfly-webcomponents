@@ -23,13 +23,14 @@ export class PfAccordionTemplate extends HTMLElement {
     this.classList.add('collapse');
     this.setAttribute('role', 'tabpanel');
 
-    // attach this as early as possible before fiddling with state attributes
     this.addEventListener('transitionend', this._handleTransitionEnd);
 
     if (this.hasAttribute('open')) {
       this.classList.add('in');
     } else if (this.classList.contains('in')) {
       this.setAttribute('open', '');
+    } else {
+      this.style.height = 0;
     }
 
     this._initialized = true;
@@ -62,44 +63,21 @@ export class PfAccordionTemplate extends HTMLElement {
   }
 
   /**
-   * Performs a collapse state change action.
-   * Compatibility function for Bootstrap collapse plugin.
-   *
-   * @param {String} state state of the panel
-   */
-  collapse(state) {
-    switch (state) {
-      case 'show':
-        this.open = true;
-        break;
-      case 'hide':
-        this.open = false;
-        break;
-      case 'toggle':
-        this.toggle();
-        break;
-    }
-  }
-
-  /**
    * Make the panel visible
    */
   _expand() {
-
     this._transitioning = true;
+    this._action = 'expanding';
 
+    this.dispatchEvent(new CustomEvent('pf-accordion.expanding', {
+      bubbles: true,
+      cancelable: false
+    }));
+    this.classList.remove('collapse');
     this.classList.add('collapsing');
-    this.classList.add('in');
 
-    // force a delay, to allow layout updates
-    setTimeout(() => {
-      this.style.height = pfUtil.getMaxHeight(this) + 'px';
+    this.style.height = pfUtil.getMaxHeight(this) + 'px';
 
-      this.dispatchEvent(new CustomEvent('pf-accordion.expanding', {
-        bubbles: true,
-        cancelable: false
-      }));
-    }, 10);
   }
 
   /**
@@ -107,18 +85,19 @@ export class PfAccordionTemplate extends HTMLElement {
    */
   _collapse() {
     this._transitioning = true;
-    let maxHeight = pfUtil.getMaxHeight(this);
-    this.style.height = maxHeight + 'px';
-    this.classList.add('collapsing');
+    this._action = 'collapsing';
 
-    // force a delay, to allow layout updates
+    this.dispatchEvent(new CustomEvent('pf-accordion.collapsing', {
+      bubbles: true,
+      cancelable: false
+    }));
+    let maxHeight = pfUtil.getMaxHeight(this);
+    this.classList.remove('collapse');
+    this.classList.add('collapsing');
+    this.style.height = maxHeight + 'px';
+
     setTimeout(() => {
       this.style.height = '0px';
-
-      this.dispatchEvent(new CustomEvent('pf-accordion.collapsing', {
-        bubbles: true,
-        cancelable: false
-      }));
     }, 10);
   }
 
@@ -134,27 +113,25 @@ export class PfAccordionTemplate extends HTMLElement {
    * @private
    */
   _handleTransitionEnd() {
+
     this.classList.remove('collapsing');
     this.classList.add('collapse');
-    if (this.open) {
+    if ('expanding' === this._action) {
+      this.classList.add('in');
+      this.style.height = '';
       this.setAttribute('aria-expanded', 'true');
-      this.classList.remove('collapsing');
-
       this.dispatchEvent(new CustomEvent('pf-accordion.expanded', {
         bubbles: true
       }));
     } else {
       this.setAttribute('aria-expanded', 'false');
-      this.classList.remove('collapsing');
-      this.classList.remove('in');
-
       this.dispatchEvent(new CustomEvent('pf-accordion.collapsed', {
         bubbles: true
       }));
     }
 
-    this.style.height = '';
     this._transitioning = false;
+    this._action = null;
   }
 
   /**

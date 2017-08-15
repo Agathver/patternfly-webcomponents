@@ -1,14 +1,14 @@
 describe('PatternFly Accordion Component Tests', function () {
-  var accordion, accordionPanel, accordionHeading, accordionTemplate, accordionHeadingToggle,
+  let accordion, accordionPanel, accordionHeading, accordionTemplate, accordionHeadingToggle,
     accordionPanel2, accordionHeading2, accordionTemplate2, accordionHeadingToggle2;
 
   function addChild(parent, element) {
-    var promise = new Promise(function (resolve) {
-      var observer = new MutationObserver(function () {
+    let promise = new Promise(function (resolve) {
+      let observer = new MutationObserver(function () {
         resolve();
         observer.disconnect();
       });
-      var config = {
+      let config = {
         attributes: true,
         childList: true,
         characterData: true
@@ -20,9 +20,9 @@ describe('PatternFly Accordion Component Tests', function () {
   }
 
   function removeChild(parent, element) {
-    var promise = new Promise(function (resolve) {
-      var observer = new MutationObserver(function (mutations) {
-        var i, j, mutation;
+    let promise = new Promise(function (resolve) {
+      let observer = new MutationObserver(function (mutations) {
+        let i, j, mutation;
         for (i = 0; i < mutations.length; i++) {
           mutation = mutations[i];
           for (j = 0; j < mutation.removedNodes.length; j++) {
@@ -34,7 +34,7 @@ describe('PatternFly Accordion Component Tests', function () {
           }
         }
       });
-      var config = {
+      let config = {
         attributes: true,
         childList: true,
         characterData: true
@@ -49,6 +49,16 @@ describe('PatternFly Accordion Component Tests', function () {
     return addChild(document.body, element);
   }
 
+  function simulateOnTransitionEnd(elem) {
+    elem.addEventListener('pf-accordion.expanding',
+      () =>   setTimeout( () =>  accordionTemplate._handleTransitionEnd(), 1000)
+    );
+
+    elem.addEventListener('pf-accordion.collapsing',
+      () => setTimeout( () =>  accordionTemplate._handleTransitionEnd(), 1000)
+    );
+  }
+
   beforeEach(function () {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
     accordion = document.createElement('pf-accordion');
@@ -60,15 +70,6 @@ describe('PatternFly Accordion Component Tests', function () {
     accordionTemplate = document.createElement('pf-accordion-template');
     accordionTemplate.innerHTML = '<pf-accordion-body>Collapse CONTENT 1</pf-accordion-body>';
     accordionTemplate.id = 'pfAccordionTemplate';
-
-    // manually trigger 'ontransitionend' for tests in absence of css
-    accordionTemplate.addEventListener('pf-accordion.expanding', function () {
-      accordionTemplate._handleTransitionEnd();
-    });
-
-    accordionTemplate.addEventListener('pf-accordion.collapsing', function () {
-      accordionTemplate._handleTransitionEnd();
-    });
 
     accordionHeadingToggle = document.createElement('a');
     accordionHeadingToggle.setAttribute('data-toggle', 'collapse');
@@ -85,14 +86,6 @@ describe('PatternFly Accordion Component Tests', function () {
     accordionTemplate2.innerHTML = '<pf-accordion-body>Collapse CONTENT 2</pf-accordion-body>';
     accordionTemplate2.id = 'pfAccordionTemplate2';
 
-    // manually trigger 'ontransitionend' for tests in absence of css
-    accordionTemplate2.addEventListener('pf-accordion.expanding', function () {
-      accordionTemplate2._handleTransitionEnd();
-    });
-
-    accordionTemplate2.addEventListener('pf-accordion.collapsing', function () {
-      accordionTemplate2._handleTransitionEnd();
-    });
     accordionHeadingToggle2 = document.createElement('a');
     accordionHeadingToggle2.setAttribute('data-toggle', 'collapse');
     accordionHeading2.appendChild(accordionHeadingToggle2);
@@ -170,18 +163,14 @@ describe('PatternFly Accordion Component Tests', function () {
   });
 
   it('put the correct class on accordion toggle when accordion template is shown', function () {
-    return addElementToBody(accordion).then(function () {
+    return addElementToBody(accordion).then(() => {
       accordionTemplate.open = true;
-      return new Promise(function (resolve) {
-        setTimeout(function () {
-          expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(false);
-          resolve();
-        }, 100);
-      });
+      expect(accordionHeadingToggle.classList.contains('collapsed')).toBe(false);
     });
   });
 
   it('closes other open panel when another is opened', function (done) {
+    simulateOnTransitionEnd(accordionTemplate);
     accordionTemplate.addEventListener('pf-accordion.collapsed', function () {
       expect(accordionTemplate.open).toBe(false);
       done();
@@ -189,46 +178,6 @@ describe('PatternFly Accordion Component Tests', function () {
     accordionTemplate.open = true;
     addElementToBody(accordion).then(function () {
       accordionTemplate2.open = true;
-    });
-  });
-
-  it('put the correct value in open on display change of accordion template', function () {
-    return addElementToBody(accordion).then(function () {
-      accordionTemplate.open = true;
-
-      return new Promise(function (resolve) {
-        setTimeout(function () {
-          expect(accordionTemplate.open).toBe(true);
-          accordionTemplate.open = false;
-          setTimeout(function () {
-            expect(accordionTemplate.open).toBe(false);
-            resolve();
-          }, 100);
-        }, 100);
-      });
-    });
-  });
-
-  it('changes the display state of acccordion template with open', function (done) {
-    addElementToBody(accordion).then(function () {
-      accordionTemplate.addEventListener('pf-accordion.expanded', function () {
-        expect(accordionTemplate.classList.contains('in')).toBe(true);
-
-        // wait for transitioning to complete
-        requestAnimationFrame(function () {
-          accordionTemplate.open = false;
-        });
-      });
-
-      accordionTemplate.addEventListener('pf-accordion.collapsed', function () {
-        requestAnimationFrame(function () {
-          expect(accordionTemplate.classList.contains('in')).toBe(false);
-          done();
-        });
-      });
-      accordionTemplate.open = true;
-    }).catch(function () {
-      done.fail();
     });
   });
 
@@ -286,7 +235,7 @@ describe('PatternFly Accordion Component Tests', function () {
   });
 
   it('picks the next toggle element when current is removed', function () {
-    var newToggle = document.createElement('a');
+    let newToggle = document.createElement('a');
     newToggle.setAttribute('data-toggle', 'collapse');
     accordionHeading.appendChild(newToggle);
     return addElementToBody(accordion)
@@ -299,7 +248,7 @@ describe('PatternFly Accordion Component Tests', function () {
   });
 
   it('picks the toggle when added after initialization', function () {
-    var newToggle = document.createElement('a');
+    let newToggle = document.createElement('a');
     newToggle.setAttribute('data-toggle', 'collapse');
     return removeChild(accordionHeading, accordionHeadingToggle)
       .then(function () {
@@ -313,7 +262,7 @@ describe('PatternFly Accordion Component Tests', function () {
   });
 
   it('allows to add new panels after initialization', function () {
-    var newChild = document.createElement('pf-accordion-panel');
+    let newChild = document.createElement('pf-accordion-panel');
     newChild.innerHTML = '<pf-accordion-heading>< a href="#" data-toggle="collapse">Heading</a></pf-accordion-heading><pf-accordion-template><pf-accordion-body></pf-accordion-body></pf-accordion-template>';
     return addElementToBody(accordion).then(function () {
       return addChild(accordion, newChild);
@@ -327,6 +276,23 @@ describe('PatternFly Accordion Component Tests', function () {
       return removeChild(accordion, accordionPanel2);
     }).then(function () {
       expect(accordionPanel2.parentNode).toBe(null);
+    });
+  });
+
+  it('put the correct value in open on display change of accordion template', function () {
+    return addElementToBody(accordion).then(function () {
+      accordionTemplate.open = true;
+
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          expect(accordionTemplate.open).toBe(true);
+          accordionTemplate.open = false;
+          setTimeout(function () {
+            expect(accordionTemplate.open).toBe(false);
+            resolve();
+          }, 100);
+        }, 100);
+      });
     });
   });
 });
