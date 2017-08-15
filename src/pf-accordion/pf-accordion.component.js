@@ -55,31 +55,6 @@ export class PfAccordion extends HTMLElement {
       for (let i = 0; i < mutations.length; i++) {
         let mutation = mutations[i];
         if ('childList' === mutation.type) {
-
-          // handle dynamic addition of panels
-          for (let i = 0; i < mutation.addedNodes.length; i++) {
-            let node = mutation.addedNodes[i];
-            // only check for element nodes
-            if (1 === node.nodeType && 'pf-accordion-panel' === node.tagName.toLowerCase()) {
-              let panel = node.querySelector('pf-accordion-template');
-              if (null !== panel) {
-                this._checkAndAddPanel(panel);
-              }
-            }
-          }
-
-          // handle removal of panels
-          for (let i = 0; i < mutation.removedNodes.length; i++) {
-            let node = mutation.removedNodes[i];
-            // only check for element nodes
-            if (1 === node.nodeType && 'pf-accordion-panel' === node.tagName.toLowerCase()) {
-              let panel = node.querySelector('pf-accordion-template');
-              if (null !== panel) {
-                this._checkAndRemovePanel(panel);
-              }
-            }
-          }
-
           // fixed height needs to be recalculated on DOM initialization
           if (this.hasAttribute('fixedheight')) {
             this._setFixedHeight();
@@ -96,14 +71,6 @@ export class PfAccordion extends HTMLElement {
     this.classList.add('panel-group');
     this.setAttribute('role', 'tablist');
     this.setAttribute('aria-multiselectable', 'true');
-
-    let panels = this.querySelectorAll('pf-accordion-panel > pf-accordion-template');
-    if (panels) {
-      for (let i = 0; i < panels.length; i++) {
-        let panel = panels[i];
-        this._checkAndAddPanel(panel);
-      }
-    }
 
     // catch bubbled events
     this.addEventListener('pf-accordion.expanding', this._handlePanelShown);
@@ -123,59 +90,19 @@ export class PfAccordion extends HTMLElement {
   }
 
   /**
-   * Check and add panel if it is initialized
-   * @private
-   * @param {PfAccordionTemplate} panel the toggle pane;
-   */
-  _checkAndAddPanel(panel) {
-    if (panel._initialized) {
-      if (panel.open) {
-        this._openPanels.push(panel);
-      }
-    } else {
-      pfUtil.once(panel, 'pf-accordion.initialized', () => {
-        if (panel.open) {
-          this._openPanels.push(panel);
-        }
-      });
-    }
-  }
-
-  /**
-   * Check and remove a panel if it is in the array of open panels
-   * @private
-   * @param {PfAccordionTemplate} panel the toggle pane;
-   */
-  _checkAndRemovePanel(panel) {
-    let index = this._openPanels.indexOf(panel);
-    if (index > -1) {
-      this._openPanels.splice(index, 1);
-    }
-  }
-
-  /**
-   * Handle bubbled pf-accordion-collapsing on accordion
-   * @param {Event} e event
-   * @private
-   */
-  _handlePanelHidden(e) {
-    let index = this._openPanels.indexOf(e.target);
-    if (index > -1) {
-      this._openPanels.splice(index, 1);
-    }
-  }
-
-  /**
    * Handle bubbled pf-accordion-expanding on accordion
    * @param {Event} e event
    * @private
    */
   _handlePanelShown(e) {
-    let panel;
-    while ((panel = this._openPanels.shift())) {
-      panel.open = false;
+    let openPanels = this.querySelectorAll('.collapse.in');
+    for (let panel of openPanels) {
+      if (e !== panel) {
+        panel.open = false;
+      } else {
+        window.__debug = 1 + 2;
+      }
     }
-    this._openPanels.push(e.target);
   }
 
   /**
@@ -228,11 +155,6 @@ export class PfAccordion extends HTMLElement {
 
     // Determine the height remaining for opened collapse panels
     let bodyHeight = this.clientHeight - contentHeight;
-
-    // show scrollbars when content height > element height,
-    // if (bodyHeight < 0) {
-    //   bodyHeight = this.clientHeight;
-    // }
 
     // Make sure we have enough height to be able to scroll the contents if necessary
     if (bodyHeight < 25) {

@@ -69,7 +69,6 @@ class PfUtil {
     };
   }
 
-<<<<<<< 2157fc52262d21feaa88d280d56f269461cb83b8
   reflow (el) { // force reflow
     return el.offsetHeight;
   }
@@ -90,39 +89,23 @@ class PfUtil {
   // https://github.com/thednp/bootstrap.native
   // Copyright (c) 2015 dnp_theme
 
-  getOuterHeight (child) {
+  getOuterHeight(child) {
     let childStyle = child && window.getComputedStyle(child),
       btp = /px/.test(childStyle.borderTopWidth) ? Math.round(childStyle.borderTopWidth.replace('px', '')) : 0,
       btb = /px/.test(childStyle.borderBottomWidth) ? Math.round(childStyle.borderBottomWidth.replace('px', '')) : 0,
       mtp = /px/.test(childStyle.marginTop) ? Math.round(childStyle.marginTop.replace('px', '')) : 0,
       mbp = /px/.test(childStyle.marginBottom) ? Math.round(childStyle.marginBottom.replace('px', '')) : 0;
-    return child.clientHeight + parseInt( btp ) + parseInt( btb ) + parseInt( mtp ) + parseInt( mbp );
+    return child.clientHeight + parseInt(btp) + parseInt(btb) + parseInt(mtp) + parseInt(mbp);
   }
-=======
->>>>>>> Add initial delay to smooth out animations
-  getMaxHeight (parent) { // get collapse trueHeight and border
+
+  getMaxHeight(parent) { // get collapse trueHeight and border
     let parentHeight = 0;
     for (let k = 0, ll = parent.children.length; k < ll; k++) {
       parentHeight += parent.children[k].offsetHeight;
     }
     return parentHeight;
   }
-  once (element, event, handler, context) {
-    let ephemeralHandler = function (e) {
-      try {
-        handler.call(context || this, e);
-      } finally {
-        element.removeEventListener(event, ephemeralHandler);
-      }
-    };
-    element.addEventListener(event, ephemeralHandler);
-  }
 }
+
 let pfUtil = new PfUtil();
-<<<<<<< 987ea73e26c72e563c933fd5879c92e6573eab21
-export {
-  pfUtil
-};
-=======
 export {pfUtil};
->>>>>>> Trigger animation in proper sequence
