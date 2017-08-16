@@ -1,4 +1,4 @@
-describe ("PatternFly Alert Component Tests", function () {
+describe ("PatternFly Switch Component Tests", function () {
   let customElement;
 
   function addElementToBody (element) {
