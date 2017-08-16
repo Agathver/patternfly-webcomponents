@@ -5716,11 +5716,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * <b>&lt;pf-switch&gt;</b> element for Patternfly Web Components
  *
  * @example {@lang xml}
- * <pf-switch closed>initialized
+ * <pf-switch state="closed">
  *   <input type="checkbox" id="switch-state" />
  * </pf-switch>
  *
- * @prop {bool} closed
+ * @prop {string} state
  * @prop {bool} readonly
  * @prop {bool} disabled
  * @prop {bool} hidden
@@ -5761,7 +5761,7 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
 
       this.insertBefore(this._template.content, this.firstChild);
       this._stateElement = this.querySelector('input');
-
+      this._setState(this.getAttribute('state'));
       this._normalizeAndSetText();
       this._setAnimated(this.hasAttribute('animated'));
       this._setDisabled(this.hasAttribute('disabled'));
@@ -5787,12 +5787,8 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
   }, {
     key: 'attributeChangedCallback',
     value: function attributeChangedCallback(attrName, oldValue, newValue) {
-      if (attrName === 'closed') {
-        this._setStateElementChecked(newValue);
-        this.dispatchEvent(new Event('pf-switch.change', {
-          bubbles: false
-        }));
-      } else if (attrName === 'indeterminate') {
+      if (attrName === 'state') {
+        this._setState(newValue);
         this.dispatchEvent(new Event('pf-switch.change', {
           bubbles: false
         }));
@@ -5808,24 +5804,86 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         this._setAnimated(this.hasAttribute('animated'));
       }
     }
+
+    /**
+     * Sets the state of the switch
+     *
+     * @param state current state
+     * @private
+     */
+
   }, {
-    key: '_setStateElementChecked',
-    value: function _setStateElementChecked(val) {
-      if (val) {
-        if (this._stateElement) {
-          this._stateElement.setAttribute('checked', '');
-        }
-      } else {
-        if (this._stateElement) {
-          this._stateElement.removeAttribute('checked');
-        }
+    key: '_setState',
+    value: function _setState(state) {
+      var wrapper = this.querySelector('.bootstrap-switch-wrapper');
+      if (wrapper) {
+        wrapper.classList.remove('bootstrap-switch-on');
+        wrapper.classList.remove('bootstrap-switch-off');
+        wrapper.classList.remove('bootstrap-switch-indeterminate');
+      }
+      switch (state) {
+        case 'closed':
+          this._state = 'closed';
+          if (wrapper) {
+            wrapper.classList.add('bootstrap-switch-on');
+          }
+          if (this._stateElement) {
+            this._stateElement.indeterminate = false;
+            this._stateElement.setAttribute('checked', '');
+          }
+          break;
+        case 'indeterminate':
+          this._state = 'indeterminate';
+          if (wrapper) {
+            wrapper.classList.add('bootstrap-switch-indeterminate');
+            if (this._stateElement) {
+              this._stateElement.indeterminate = true;
+            }
+          }
+          break;
+        default:
+          this._state = 'open';
+          if (wrapper) {
+            wrapper.classList.add('bootstrap-switch-off');
+          }
+          if (this._stateElement) {
+            this._stateElement.indeterminate = false;
+            this._stateElement.removeAttribute('checked');
+          }
+          break;
       }
     }
+
+    /**
+     * Get state of the switch
+     *
+     * @return {string}
+     */
+
   }, {
     key: 'toggle',
+
+
+    /**
+     * Toggle the state of the switch.
+     *
+     * If the current state is 'indeterminate' it sets the state to 'open'.
+     */
     value: function toggle() {
-      this.closed = !this.closed;
+      if (this.state === 'open') {
+        this.state = 'closed';
+      } else {
+        this.state = 'open';
+      }
     }
+
+    /**
+     * Set text used in closed state.
+     *
+     * @param text
+     * @private
+     */
+
   }, {
     key: '_setClosedText',
     value: function _setClosedText(text) {
@@ -5834,6 +5892,14 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         close.innerText = text;
       }
     }
+
+    /**
+     * Set text used in open state.
+     *
+     * @param text
+     * @private
+     */
+
   }, {
     key: '_setOpenText',
     value: function _setOpenText(text) {
@@ -5842,6 +5908,14 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         open.innerText = text;
       }
     }
+
+    /**
+     * Set text used for label.
+     *
+     * @param text
+     * @private
+     */
+
   }, {
     key: '_setLabelText',
     value: function _setLabelText(text) {
@@ -5850,6 +5924,14 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         label.innerText = text;
       }
     }
+
+    /**
+     * Set this switch to read-only
+     *
+     * @param isReadOnly
+     * @private
+     */
+
   }, {
     key: '_setReadOnly',
     value: function _setReadOnly(isReadOnly) {
@@ -5868,6 +5950,14 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         }
       }
     }
+
+    /**
+     * Disable or enable this switch
+     *
+     * @param isDisabled
+     * @private
+     */
+
   }, {
     key: '_setDisabled',
     value: function _setDisabled(isDisabled) {
@@ -5887,6 +5977,14 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         }
       }
     }
+
+    /**
+     * Set this switch and its underlying input element to hidden.
+     *
+     * @param isHidden
+     * @private
+     */
+
   }, {
     key: '_setHidden',
     value: function _setHidden(isHidden) {
@@ -5900,6 +5998,14 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         }
       }
     }
+
+    /**
+     * Enable or disable animations of this switch
+     *
+     * @param isAnimated
+     * @private
+     */
+
   }, {
     key: '_setAnimated',
     value: function _setAnimated(isAnimated) {
@@ -5912,6 +6018,12 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         }
       }
     }
+
+    /**
+     * Properly display the text in the switch
+     * @private
+     */
+
   }, {
     key: '_normalizeAndSetText',
     value: function _normalizeAndSetText() {
@@ -5925,6 +6037,15 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
       this._setOpenText(this._padBoth(offText, len));
       this._setLabelText(this._padBoth(labText, len));
     }
+
+    /**
+     * Pad both sides of the string with non-breaking space to make it to a specific length
+     * @param {string} str
+     * @param {int} length
+     * @return {string}
+     * @private
+     */
+
   }, {
     key: '_padBoth',
     value: function _padBoth(str, length) {
@@ -5936,58 +6057,105 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
       return str;
     }
   }, {
-    key: 'closed',
+    key: 'state',
     get: function get() {
-      return this.hasAttribute('closed') && !this.indeterminate;
-    },
-    set: function set(value) {
-      if (value) {
-        this.setAttribute('closed', '');
-      } else {
-        this.removeAttribute('closed');
-      }
+      return this._state;
     }
+
+    /**
+     * Set state of the switch
+     *
+     * @param {string} value state to set, must be 'open', 'closed' or 'indeterminate'
+     */
+    ,
+    set: function set(value) {
+      this.setAttribute('state', value);
+    }
+
+    /**
+     * Get text displayed in closed state
+     *
+     * @return {string}
+     */
+
   }, {
     key: 'closedText',
     get: function get() {
       return this.getAttribute('closed-text') || 'ON';
-    },
+    }
+
+    /**
+     * Set text displayed in closed state
+     *
+     * @param {string} value text to use in closed switch
+     */
+    ,
     set: function set(value) {
       this.setAttribute('closed-text', value);
     }
+
+    /**
+     * Get text displayed in open state
+     *
+     * @return {string}
+     */
+
   }, {
     key: 'openText',
     get: function get() {
       return this.getAttribute('open-text') || 'OFF';
-    },
+    }
+
+    /**
+     * Set text displayed in open state
+     *
+     * @param {string} value text to use in open switch
+     */
+    ,
     set: function set(value) {
       this.setAttribute('open-text', value);
     }
+
+    /**
+     * Set text displayed on the slider knob
+     *
+     * @return {string}
+     */
+
   }, {
     key: 'labelText',
     get: function get() {
       return this.getAttribute('label-text') || '';
-    },
+    }
+
+    /**
+     * Set text displayed on the slider knob
+     *
+     * @param {string} value text to use as label
+     */
+    ,
     set: function set(value) {
       this.setAttribute('label-text', value);
     }
-  }, {
-    key: 'indeterminate',
-    get: function get() {
-      return this.hasAttribute('indeterminate');
-    },
-    set: function set(value) {
-      if (value) {
-        this.setAttribute('indeterminate', '');
-      } else {
-        this.removeAttribute('indeterminate');
-      }
-    }
+
+    /**
+     * Get whether switch is set to read only.
+     *
+     * @return {boolean}
+     */
+
   }, {
     key: 'readonly',
     get: function get() {
       return this.hasAttribute('readonly');
-    },
+    }
+
+    /**
+     * Set whether switch should be read only.
+     *
+     * @param {boolean} value
+     */
+    ,
     set: function set(value) {
       if (value) {
         this.setAttribute('readonly', '');
@@ -5995,11 +6163,25 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         this.removeAttribute('readonly');
       }
     }
+
+    /**
+     * Get whether switch is disabled.
+     *
+     * @return {boolean}
+     */
+
   }, {
     key: 'disabled',
     get: function get() {
       return this.hasAttribute('disabled');
-    },
+    }
+
+    /**
+     * Set whether switch should be disabled.
+     *
+     * @param {boolean} value
+     */
+    ,
     set: function set(value) {
       if (value) {
         this.setAttribute('disabled', '');
@@ -6007,11 +6189,25 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         this.removeAttribute('disabled');
       }
     }
+
+    /**
+     * Get whether switch animations are enabled.
+     *
+     * @return {boolean}
+     */
+
   }, {
     key: 'animated',
     get: function get() {
       return this.hasAttribute('animated');
-    },
+    }
+
+    /**
+     * Set whether switch should be animated.
+     *
+     * @param {boolean} value
+     */
+    ,
     set: function set(value) {
       if (value) {
         this.setAttribute('animated', '');
@@ -6019,10 +6215,38 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
         this.removeAttribute('animated');
       }
     }
+
+    /**
+     * Get whether switch is hidden.
+     *
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'hidden',
+    get: function get() {
+      return this.hasAttribute('hidden');
+    }
+
+    /**
+     * Set whether switch should be hidden.
+     *
+     * This also sets the hidden attribute on the underlying input element.
+     *
+     * @param {boolean} value
+     */
+    ,
+    set: function set(value) {
+      if (value) {
+        this.setAttribute('hidden', '');
+      } else {
+        this.removeAttribute('hidden');
+      }
+    }
   }], [{
     key: 'observedAttributes',
     get: function get() {
-      return ['closed', 'open-text', 'closed-text', 'label-text', 'readonly', 'disabled', 'hidden', 'animated'];
+      return ['state', 'open-text', 'closed-text', 'label-text', 'readonly', 'disabled', 'hidden', 'animated'];
     }
   }]);
 

@@ -85,17 +85,16 @@ pf-switch {
   pf-switch > .bootstrap-switch {
     overflow: hidden; }
     pf-switch > .bootstrap-switch > .bootstrap-switch-container {
-      width: 100%;
+      width: 150%;
       margin-left: -50%;
-      display: flex; }
+      display: table;
+      border-collapse: separate; }
       pf-switch > .bootstrap-switch > .bootstrap-switch-container > span {
-        white-space: nowrap;
-        flex-basis: 50%;
-        flex-shrink: 0;
-        flex-grow: 1; }
-
-pf-switch[closed] > .bootstrap-switch > .bootstrap-switch-container {
-  margin-left: 0%; }
+        width: 33.334%; }
+    pf-switch > .bootstrap-switch.bootstrap-switch.bootstrap-switch-on > .bootstrap-switch-container {
+      margin-left: 0%; }
+    pf-switch > .bootstrap-switch.bootstrap-switch.bootstrap-switch-indeterminate > .bootstrap-switch-container {
+      margin-left: -25%; }
 
 pf-switch[hidden] {
   display: none; }

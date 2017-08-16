@@ -20,14 +20,14 @@
       </span>
   </p>
   <p>
-    <pf-switch animated closed id="test-switch-2">
+    <pf-switch animated state="closed" id="test-switch-2">
       <input id="test-switch-2-state" type="checkbox"/>
     </pf-switch>
   </p>
   <h2>Switches with custom labels</h2>
   <hr>
   <p>
-    <pf-switch animated closed id="test-switch-3" open-text="&#x274c;" closed-text="&#x2714;">
+    <pf-switch animated state="closed" id="test-switch-3" open-text="&#x274c;" closed-text="&#x2714;">
       <input id="test-switch-3-state" type="checkbox"/>
     </pf-switch>
   </p>
@@ -125,7 +125,11 @@
         test.readonly = e.target.checked;
       });
       document.getElementById('indeterminate').addEventListener('change', function (e) {
-        test.indeterminate = e.target.checked;
+        if (e.target.checked) {
+          test.state = 'indeterminate';
+        } else {
+          test.state = 'closed';
+        }
       });
       document.getElementById('animated').addEventListener('change', function (e) {
         test.animated = e.target.checked;

@@ -5,28 +5,27 @@ pf-switch {
     display: none;
   }
 
-  >.bootstrap-switch {
+  > .bootstrap-switch {
     overflow: hidden;
-    >.bootstrap-switch-container {
-      width: 100%;
+    > .bootstrap-switch-container {
+      width: 150%;
       margin-left: -50%;
-      display: flex;
-      //border-collapse: separate;
-      >span {
-        //width: 33.334%;
-        white-space: nowrap;
-        flex-basis: 50%;
-        flex-shrink: 0;
-        flex-grow: 1;
+      display: table;
+      border-collapse: separate;
+      > span {
+        width: 33.334%;
       }
     }
-  }
-}
+    &.bootstrap-switch.bootstrap-switch-on {
+      > .bootstrap-switch-container {
+        margin-left: 0%;
+      }
+    }
 
-pf-switch[closed] {
-  >.bootstrap-switch {
-    >.bootstrap-switch-container {
-      margin-left: 0%;
+    &.bootstrap-switch.bootstrap-switch-indeterminate {
+      > .bootstrap-switch-container {
+        margin-left: -25%;
+      }
     }
   }
 }

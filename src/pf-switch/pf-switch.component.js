@@ -4,11 +4,11 @@ import {default as tmpl} from 'pf-switch.template';
  * <b>&lt;pf-switch&gt;</b> element for Patternfly Web Components
  *
  * @example {@lang xml}
- * <pf-switch closed>initialized
+ * <pf-switch state="closed">
  *   <input type="checkbox" id="switch-state" />
  * </pf-switch>
  *
- * @prop {bool} closed
+ * @prop {string} state
  * @prop {bool} readonly
  * @prop {bool} disabled
  * @prop {bool} hidden
@@ -33,7 +33,7 @@ export class PfSwitch extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['closed', 'open-text', 'closed-text', 'label-text', 'readonly', 'disabled', 'hidden', 'animated'];
+    return ['state', 'open-text', 'closed-text', 'label-text', 'readonly', 'disabled', 'hidden', 'animated'];
   }
 
   /**
@@ -43,7 +43,7 @@ export class PfSwitch extends HTMLElement {
 
     this.insertBefore(this._template.content, this.firstChild);
     this._stateElement = this.querySelector('input');
-
+    this._setState(this.getAttribute('state'));
     this._normalizeAndSetText();
     this._setAnimated(this.hasAttribute('animated'));
     this._setDisabled(this.hasAttribute('disabled'));
@@ -66,16 +66,13 @@ export class PfSwitch extends HTMLElement {
    * @param {string} newValue The new attribute value
    */
   attributeChangedCallback(attrName, oldValue, newValue) {
-    if (attrName === 'closed') {
-      this._setStateElementChecked(newValue);
+    if (attrName === 'state') {
+      this._setState(newValue);
       this.dispatchEvent(new Event('pf-switch.change', {
         bubbles: false
       }));
-    } else if (attrName === 'indeterminate') {
-      this.dispatchEvent(new Event('pf-switch.change', {
-        bubbles: false
-      }));
-    } else if (attrName === 'open-text' || attrName === 'closed-text' || attrName === 'label-text') {
+    } else if (attrName === 'open-text' || attrName === 'closed-text'
+      || attrName === 'label-text') {
       this._normalizeAndSetText();
     } else if (attrName === 'readonly') {
       this._setReadOnly(this.hasAttribute('readonly'));
@@ -88,70 +85,138 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
-  _setStateElementChecked(val) {
-    if (val) {
-      if (this._stateElement) {
-        this._stateElement.setAttribute('checked', '');
-      }
-    } else {
-      if (this._stateElement) {
-        this._stateElement.removeAttribute('checked');
-      }
+  /**
+   * Sets the state of the switch
+   *
+   * @param state current state
+   * @private
+   */
+  _setState(state) {
+    let wrapper = this.querySelector('.bootstrap-switch-wrapper');
+    if (wrapper) {
+      wrapper.classList.remove('bootstrap-switch-on');
+      wrapper.classList.remove('bootstrap-switch-off');
+      wrapper.classList.remove('bootstrap-switch-indeterminate');
+    }
+    switch (state) {
+      case 'closed':
+        this._state = 'closed';
+        if (wrapper) {
+          wrapper.classList.add('bootstrap-switch-on');
+        }
+        if (this._stateElement) {
+          this._stateElement.indeterminate = false;
+          this._stateElement.setAttribute('checked', '');
+        }
+        break;
+      case 'indeterminate':
+        this._state = 'indeterminate';
+        if (wrapper) {
+          wrapper.classList.add('bootstrap-switch-indeterminate');
+          if (this._stateElement) {
+            this._stateElement.indeterminate = true;
+          }
+        }
+        break;
+      default:
+        this._state = 'open';
+        if (wrapper) {
+          wrapper.classList.add('bootstrap-switch-off');
+        }
+        if (this._stateElement) {
+          this._stateElement.indeterminate = false;
+          this._stateElement.removeAttribute('checked');
+        }
+        break;
     }
   }
 
-  get closed() {
-    return this.hasAttribute('closed') && !this.indeterminate;
+  /**
+   * Get state of the switch
+   *
+   * @return {string}
+   */
+  get state() {
+    return this._state;
   }
 
-  set closed(value) {
-    if (value) {
-      this.setAttribute('closed', '');
-    } else {
-      this.removeAttribute('closed');
-    }
+  /**
+   * Set state of the switch
+   *
+   * @param {string} value state to set, must be 'open', 'closed' or 'indeterminate'
+   */
+  set state(value) {
+    this.setAttribute('state', value);
   }
 
+  /**
+   * Get text displayed in closed state
+   *
+   * @return {string}
+   */
   get closedText() {
     return this.getAttribute('closed-text') || 'ON';
   }
 
+  /**
+   * Set text displayed in closed state
+   *
+   * @param {string} value text to use in closed switch
+   */
   set closedText(value) {
     this.setAttribute('closed-text', value);
   }
 
+  /**
+   * Get text displayed in open state
+   *
+   * @return {string}
+   */
   get openText() {
     return this.getAttribute('open-text') || 'OFF';
   }
 
+  /**
+   * Set text displayed in open state
+   *
+   * @param {string} value text to use in open switch
+   */
   set openText(value) {
     this.setAttribute('open-text', value);
   }
 
+  /**
+   * Set text displayed on the slider knob
+   *
+   * @return {string}
+   */
   get labelText() {
     return this.getAttribute('label-text') || '';
   }
 
+  /**
+   * Set text displayed on the slider knob
+   *
+   * @param {string} value text to use as label
+   */
   set labelText(value) {
     this.setAttribute('label-text', value);
   }
 
-  get indeterminate() {
-    return this.hasAttribute('indeterminate');
-  }
-
-  set indeterminate(value) {
-    if (value) {
-      this.setAttribute('indeterminate', '');
-    } else {
-      this.removeAttribute('indeterminate');
-    }
-  }
-
+  /**
+   * Get whether switch is set to read only.
+   *
+   * @return {boolean}
+   */
   get readonly() {
     return this.hasAttribute('readonly');
   }
 
+  /**
+   * Set whether switch should be read only.
+   *
+   * @param {boolean} value
+   */
   set readonly(value) {
     if (value) {
       this.setAttribute('readonly', '');
@@ -160,10 +225,20 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Get whether switch is disabled.
+   *
+   * @return {boolean}
+   */
   get disabled() {
     return this.hasAttribute('disabled');
   }
 
+  /**
+   * Set whether switch should be disabled.
+   *
+   * @param {boolean} value
+   */
   set disabled(value) {
     if (value) {
       this.setAttribute('disabled', '');
@@ -172,10 +247,20 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Get whether switch animations are enabled.
+   *
+   * @return {boolean}
+   */
   get animated() {
     return this.hasAttribute('animated');
   }
 
+  /**
+   * Set whether switch should be animated.
+   *
+   * @param {boolean} value
+   */
   set animated(value) {
     if (value) {
       this.setAttribute('animated', '');
@@ -184,10 +269,49 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
-  toggle() {
-    this.closed = !this.closed;
+  /**
+   * Get whether switch is hidden.
+   *
+   * @return {boolean}
+   */
+  get hidden() {
+    return this.hasAttribute('hidden');
   }
 
+  /**
+   * Set whether switch should be hidden.
+   *
+   * This also sets the hidden attribute on the underlying input element.
+   *
+   * @param {boolean} value
+   */
+  set hidden(value) {
+    if (value) {
+      this.setAttribute('hidden', '');
+    } else {
+      this.removeAttribute('hidden');
+    }
+  }
+
+  /**
+   * Toggle the state of the switch.
+   *
+   * If the current state is 'indeterminate' it sets the state to 'open'.
+   */
+  toggle() {
+    if (this.state === 'open') {
+      this.state = 'closed';
+    } else {
+      this.state = 'open';
+    }
+  }
+
+  /**
+   * Set text used in closed state.
+   *
+   * @param text
+   * @private
+   */
   _setClosedText(text) {
     let close = this.querySelector('.bootstrap-switch-handle-on');
     if (close) {
@@ -195,6 +319,12 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Set text used in open state.
+   *
+   * @param text
+   * @private
+   */
   _setOpenText(text) {
     let open = this.querySelector('.bootstrap-switch-handle-off');
     if (open) {
@@ -202,6 +332,12 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Set text used for label.
+   *
+   * @param text
+   * @private
+   */
   _setLabelText(text) {
     let label = this.querySelector('.bootstrap-switch-label');
     if (label) {
@@ -209,6 +345,12 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Set this switch to read-only
+   *
+   * @param isReadOnly
+   * @private
+   */
   _setReadOnly(isReadOnly) {
     let wrapper = this.querySelector('.bootstrap-switch-wrapper');
     if (wrapper) {
@@ -226,6 +368,12 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Disable or enable this switch
+   *
+   * @param isDisabled
+   * @private
+   */
   _setDisabled(isDisabled) {
     let wrapper = this.querySelector('.bootstrap-switch-wrapper');
     if (wrapper) {
@@ -244,6 +392,12 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Set this switch and its underlying input element to hidden.
+   *
+   * @param isHidden
+   * @private
+   */
   _setHidden(isHidden) {
     if (isHidden) {
       if (this._stateElement) {
@@ -256,6 +410,12 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Enable or disable animations of this switch
+   *
+   * @param isAnimated
+   * @private
+   */
   _setAnimated(isAnimated) {
     let wrapper = this.querySelector('.bootstrap-switch-wrapper');
     if (wrapper) {
@@ -267,6 +427,10 @@ export class PfSwitch extends HTMLElement {
     }
   }
 
+  /**
+   * Properly display the text in the switch
+   * @private
+   */
   _normalizeAndSetText() {
     let onText = this.closedText;
     let offText = this.openText;
@@ -279,6 +443,13 @@ export class PfSwitch extends HTMLElement {
     this._setLabelText(this._padBoth(labText, len));
   }
 
+  /**
+   * Pad both sides of the string with non-breaking space to make it to a specific length
+   * @param {string} str
+   * @param {int} length
+   * @return {string}
+   * @private
+   */
   _padBoth(str, length) {
     let diff = length - str.length;
     if (diff > 0) {
