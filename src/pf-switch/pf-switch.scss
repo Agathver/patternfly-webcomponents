@@ -8,22 +8,30 @@ pf-switch {
   >.bootstrap-switch {
     overflow: hidden;
     >.bootstrap-switch-container {
-      width: 150%;
+      width: 100%;
       margin-left: -50%;
-      display: table;
-      border-collapse: separate;
+      display: flex;
+      //border-collapse: separate;
       >span {
-        width: 33.334%;
+        //width: 33.334%;
+        white-space: nowrap;
+        flex-basis: 50%;
+        flex-shrink: 0;
+        flex-grow: 1;
       }
     }
   }
 }
 
-pf-switch[activated] {
+pf-switch[closed] {
   >.bootstrap-switch {
     >.bootstrap-switch-container {
       margin-left: 0%;
     }
   }
+}
+
+pf-switch[hidden] {
+  display: none;
 }
 
