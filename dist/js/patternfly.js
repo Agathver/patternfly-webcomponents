@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "./";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ 	return __webpack_require__(__webpack_require__.s = 48);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4390,1317 +4390,11 @@ var PfAccordionBody = exports.PfAccordionBody = function (_HTMLElement) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PfListView = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _pfListViewTemplate = __webpack_require__(29);
-
-var _pfListViewTemplate2 = _interopRequireDefault(_pfListViewTemplate);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var forEach = Array.prototype.forEach;
-
-/**
- * <b>&lt;pf-list-view&gt;</b> element for Patternfly Web Components
- *
- * @example {@lang xml}
- * <pf-list-view id="example1" show-checkboxes="true">
- *  <pf-template-repeater id="example1-content" content='[{"name": "Big Bird", "address": "1 Seaseme Street"}]'>
- *    <pf-template>
- *      <div class="list-view-pf-description">
- *        <div class="list-group-item-heading">
- *          ${name}
- *        </div>
- *        <div class="list-group-item-text">
- *          ${address}
- *        </div>
- *      </div>
- *    </pf-template>
- *  </pf-template-repeater>
- * </pf-list-view>
- *
- * @prop {string} show-checkboxes whether to show list-view checkboxes
- */
-
-var PfListView = exports.PfListView = function (_HTMLElement) {
-  _inherits(PfListView, _HTMLElement);
-
-  /*
-   * An instance of the element is created or upgraded
-   */
-  function PfListView() {
-    _classCallCheck(this, PfListView);
-
-    // Listen for when the child template-repeater updates it's content
-    // ie. repeates the user defined template and replaces $(name) with actual values
-    var _this = _possibleConstructorReturn(this, (PfListView.__proto__ || Object.getPrototypeOf(PfListView)).call(this));
-
-    _this.addEventListener("pf-template-repeater.ContentChanged", function (e) {
-      this.handleRepeaterContentChanged();
-    });
-    return _this;
-  }
-
-  /*
-   * Only attributes listed in the observedAttributes property will receive this callback
-   */
-
-
-  _createClass(PfListView, [{
-    key: 'attributeChangedCallback',
-
-
-    /**
-     * Called when element's attribute value has changed
-     *
-     * @param {string} attrName The attribute name that has changed
-     * @param {string} oldValue The old attribute value
-     * @param {string} newValue The new attribute value
-     */
-    value: function attributeChangedCallback(attributeName, oldValue, newValue) {
-      this.showHideCheckboxes();
-    }
-
-    /**
-     * Called when repeater content changes (updates content)
-     */
-
-  }, {
-    key: 'handleRepeaterContentChanged',
-    value: function handleRepeaterContentChanged() {
-      this.updateComponent();
-      this.updateCheckboxes();
-      this.updateActionButtons();
-    }
-
-    /**
-     * This method updates the overall list view and each repeated row/item in the list.
-     * @example {@lang xml}
-     *  <pf-list-view>
-     *    <pf-template-repeater content='[{"name": "Fred Flintstone", "address": "20 Dinosaur Way"}, {"name": "John Smith", "address": "415 ...'
-     *      <pf-template>
-     *        <div class="list-view-pf-description">
-     *          <div class="list-group-item-heading">
-     *            ${name}
-     *          ...
-     */
-
-  }, {
-    key: 'updateComponent',
-    value: function updateComponent() {
-
-      this._template = document.createElement('template');
-      this._template.innerHTML = _pfListViewTemplate2.default;
-
-      // get repeated templates
-      var repeatedTemplates = this.querySelectorAll('pf-template');
-
-      for (var i = 0; i < repeatedTemplates.length; i++) {
-        var template = repeatedTemplates[i];
-
-        var itemRowTemplate = document.createElement('template');
-        itemRowTemplate.innerHTML = _pfListViewTemplate.itemRow;
-
-        // Where the transclude happens
-        itemRowTemplate.content.querySelector('.list-view-pf-main-info').innerHTML = template.innerHTML;
-
-        this._template.content.querySelector('.list-view-pf').appendChild(itemRowTemplate.content);
-      }
-
-      this.innerHTML = this._template.innerHTML;
-
-      /**
-       * This method updated the component to:
-       * Ie.
-       *  <pf-list-view>
-       *    <div class="list-group list-view-pf" >
-       *      <pf-template-repeater content='[{"name": "Fred Flintstone", "address": "20 Dinosaur Way"}, {"name": "John Smith", "address": "415 ...
-       *        <pf-template>
-       *          <div class="list-group-item">
-       *            <div class="list-group-item-header">
-       *              <div class="list-view-pf-checkbox">
-       *                <input type="checkbox">
-       *              </div>
-       *              <div class="list-view-pf-main-info">
-       *                <div class="list-view-pf-description">
-       *                  ${name}
-       *                ...
-       *
-       */
-    }
-  }, {
-    key: 'updateCheckboxes',
-    value: function updateCheckboxes() {
-      this.showHideCheckboxes();
-      this.listenForCheckboxChanges();
-    }
-  }, {
-    key: 'updateActionButtons',
-    value: function updateActionButtons() {
-      var _this2 = this;
-
-      var actionButtons = PfListView.fromJson(this.getAttribute("action-buttons"));
-      // Get the headers of each row
-      var headers = this.querySelectorAll('.list-group-item-header');
-
-      // wish forEach worked with NodeLists :-(
-
-      var _loop = function _loop(i) {
-        var header = headers[i];
-        var actions = document.createElement('div');
-        actions.classList = "list-view-pf-actions";
-        actionButtons.forEach(function (button) {
-          var btn = document.createElement('button');
-          btn.innerHTML = button.name;
-          btn.classList = "btn btn-default" + (button.class ? " " + button.class : "");
-          btn.title = button.title;
-          btn.actionType = button.actionType;
-          btn.itemId = header.lastElementChild.innerText.replace(/\s+/g, ' ').trim();
-          // btn.onclick = this.handleActionButtonClick;   <-- why can't I get this way to work?!
-          btn.addEventListener("click", this.handleActionButtonClick);
-          actions.appendChild(btn);
-        }, _this2);
-
-        var refNode = header.querySelector('.list-view-pf-checkbox');
-        header.insertBefore(actions, refNode);
-      };
-
-      for (var i = 0; i < headers.length; i++) {
-        _loop(i);
-      }
-    }
-  }, {
-    key: 'handleActionButtonClick',
-    value: function handleActionButtonClick(e) {
-      var actionType = e.currentTarget.actionType;
-      var itemId = e.currentTarget.itemId;
-
-      var event = new CustomEvent('pf-list-view.ItemActionInitiated', { "actionType": actionType, "itemId": itemId });
-      event.initCustomEvent('pf-list-view.ItemActionInitiated', true, true, { "actionType": actionType, "itemId": itemId });
-      this.dispatchEvent(event);
-    }
-  }, {
-    key: 'showHideCheckboxes',
-    value: function showHideCheckboxes() {
-      var showCheckboxes = this.getAttribute("show-checkboxes");
-      var checkboxes = this.querySelectorAll('input[type="checkbox"]');
-      for (var i = 0; i < checkboxes.length; i++) {
-        var checkbox = checkboxes[i];
-        if (showCheckboxes === undefined || showCheckboxes === 'true') {
-          checkbox.parentNode.style.display = "";
-        } else {
-          checkbox.parentNode.style.display = "none";
-        }
-      }
-    }
-  }, {
-    key: 'listenForCheckboxChanges',
-    value: function listenForCheckboxChanges() {
-      var showCheckboxes = this.getAttribute("show-checkboxes");
-      if (showCheckboxes === undefined || showCheckboxes === 'true') {
-        var checkboxes = this.querySelectorAll('input[type="checkbox"]');
-        for (var i = 0; i < checkboxes.length; i++) {
-          var checkbox = checkboxes[i];
-          // TODO: kind of hacky, need a better way to do this
-          var itemId = checkbox.parentNode.parentNode.lastElementChild.innerText.replace(/\s+/g, ' ').trim();
-          checkbox.value = itemId;
-          // there can only be one
-          checkbox.removeEventListener("pf-list-view.change", handleCheckboxChange);
-          checkbox.addEventListener("pf-list-view.change", handleCheckboxChange);
-        }
-      }
-
-      function handleCheckboxChange(e) {
-        // TODO: keep track of selected items/rows, for now just output
-        var checkbox = e.currentTarget;
-        // TODO: this seems very fragile, what if HTML hierarchy changes?  Need better way.
-        checkbox.parentNode.parentNode.parentNode.classList.toggle('active');
-
-        var msg = (checkbox.checked ? "Selected: " : "Unselected: ") + checkbox.value;
-        var event = new CustomEvent('pf-list-view.RowSelectionChanged', { "value": msg });
-        event.initCustomEvent('pf-list-view.RowSelectionChanged', true, true, { "value": msg });
-        this.dispatchEvent(event);
-      }
-    }
-  }], [{
-    key: 'fromJson',
-    value: function fromJson(str) {
-      var obj = [];
-      if (typeof str === "string") {
-        try {
-          obj = JSON.parse(str);
-        } catch (e) {
-          // throw new Error("Invalid JSON string provided. ");
-        }
-      }
-      return obj;
-    }
-  }, {
-    key: 'observedAttributes',
-    get: function get() {
-      return ['show-checkboxes'];
-    }
-  }]);
-
-  return PfListView;
-}(HTMLElement);
-
-window.customElements.define('pf-list-view', PfListView);
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var pfListViewDefault = "\n<div class=\"list-group list-view-pf\">\n</div>";
-
-var pfListItem = "\n<div class=\"list-group-item\">\n  <div class=\"list-group-item-header\">\n    <div class=\"list-view-pf-checkbox\">\n      <input type=\"checkbox\">\n    </div>\n    <div class=\"list-view-pf-main-info\">\n    </div>\n  </div>\n</div>\n";
-
-exports.default = pfListViewDefault;
-exports.itemRow = pfListItem;
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/**
- * <b>&lt;pf-template-repeater&gt;</b> element for Patternfly Web Components
- *
- * This is a fork of a template-repeater: <a href="http://github.com/Nevraeka/template-repeater">http://github.com/Nevraeka/template-repeater</a>
- *
- * @example {@lang xml}
- * <pf-template-repeater id="example1-content" content='[{"name": "Big Bird", "address": "1 Seaseme Street"}]'>
- *
- *
- * @prop {string} content the json stringified content
- */
-
-var PFTemplateRepeater = function (_HTMLElement) {
-  _inherits(PFTemplateRepeater, _HTMLElement);
-
-  function PFTemplateRepeater() {
-    _classCallCheck(this, PFTemplateRepeater);
-
-    return _possibleConstructorReturn(this, (PFTemplateRepeater.__proto__ || Object.getPrototypeOf(PFTemplateRepeater)).apply(this, arguments));
-  }
-
-  _createClass(PFTemplateRepeater, [{
-    key: "render",
-
-
-    /**
-     * Renders the &lt;pf-template&gt; using PFTemplateRepeater
-     *
-     * @param {string} val The json content
-     */
-    value: function render(val) {
-      var renderError = "Content should be an Array of objects.";
-      var template = this.template;
-      var content = PFTemplateRepeater.fromJson(val);
-      this.innerHTML = (Array.isArray(content) ? content.map(andApplyTemplate) : new Error(renderError).message).join('');
-
-      function andApplyTemplate(item) {
-        return "<pf-template>" + PFTemplateRepeater.interpolate(template.cloneNode(true), item) + "</pf-template>";
-      }
-
-      // dispatch a 'repeater content changed' event
-      var event = new CustomEvent('pf-template-repeater.ContentChanged', {});
-      event.initCustomEvent('pf-template-repeater.ContentChanged', true, true, {});
-      this.dispatchEvent(event);
-
-      return this.innerHTML;
-    }
-
-    /*
-     * Only attributes listed in the observedAttributes property will receive this callback
-     */
-
-  }, {
-    key: "attributeChangedCallback",
-
-
-    /**
-     * Called when element's attribute value has changed
-     *
-     * @param {string} attrName The attribute name that has changed
-     * @param {string} oldValue The old attribute value
-     * @param {string} newValue The new attribute value
-     */
-    value: function attributeChangedCallback(name, oldVal, newVal) {
-      if (name === "content" && typeof newVal === 'string') {
-        this.template = this.querySelector('pf-template');
-        if (this.template) {
-          this.render(newVal);
-        }
-      }
-    }
-  }], [{
-    key: "interpolate",
-    value: function interpolate(template, content) {
-      var contentArr = Object.keys(content);
-      var updatedHTML = "";
-
-      if ((typeof content === "undefined" ? "undefined" : _typeof(content)) === "object") {
-        var andIterateOverData = function andIterateOverData(item) {
-          template.innerHTML = template.innerHTML.replace("${" + item + "}", content[item]);
-        };
-
-        contentArr.forEach(andIterateOverData);
-
-        updatedHTML += template.innerHTML;
-      }
-
-      return updatedHTML;
-    }
-  }, {
-    key: "fromJson",
-    value: function fromJson(str) {
-      var obj = [];
-      if (typeof str === "string") {
-        try {
-          obj = JSON.parse(str);
-        } catch (e) {
-          // throw new Error("Invalid JSON string provided. ");
-        }
-      }
-      return obj;
-    }
-  }, {
-    key: "observedAttributes",
-    get: function get() {
-      return ['content'];
-    }
-  }]);
-
-  return PFTemplateRepeater;
-}(HTMLElement);
-
-window.customElements.define("pf-template-repeater", PFTemplateRepeater);
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var PFTemplate = function (_HTMLElement) {
-  _inherits(PFTemplate, _HTMLElement);
-
-  function PFTemplate() {
-    _classCallCheck(this, PFTemplate);
-
-    return _possibleConstructorReturn(this, (PFTemplate.__proto__ || Object.getPrototypeOf(PFTemplate)).apply(this, arguments));
-  }
-
-  return PFTemplate;
-}(HTMLElement);
-
-window.customElements.define("pf-template", PFTemplate);
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.PfI18n = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _i18nUtils = __webpack_require__(1);
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/**
- * <b>&lt;pf-i18n&gt;</b> element for Patternfly Web Components
- *
- * @example <caption>Example with object literal:</caption> {@lang xml}
- * <script>
- *   var i18n = {
- *     "Hello World!": "Hello World! (de-DE)"
- *   };
- * <script>
- * <pf-i18n mixin="i18n">
- *
- * @example <caption>Example with Jed and translated JSON files:</caption> {@lang xml}
- * <link rel="localization" href="/app/i18n/fr/patternfly.json" hreflang="fr">
- * <link rel="localization" href="/app/i18n/de-DE/patternfly.json" hreflang="de-DE">
- * <script src="//cdnjs.cloudflare.com/ajax/libs/jed/1.1.1/jed.min.js"></script>
- * <script>
- *   var i18n = function() {
- *     var I18nUtil = function (locale) {
- *       var self = this;
- *
- *       // NOTE: This function is required for the pf-i18n tag to retrieve translated messages.
- *       this.getMsg = function (key) {
- *         return self.jed.gettext(key);
- *       };
- *
- *       // Fetch locale data
- *       this._fetchLocaleData = function(url) {
- *         let xmlhttp = new XMLHttpRequest();
- *         xmlhttp.onreadystatechange = function () {
- *           if (this.readyState === 4 && this.status === 200) {
- *             const localeData = JSON.parse(this.responseText);
- *             self.jed = new Jed(localeData);
- *           }
- *         };
- *         xmlhttp.open("GET", url, false);
- *         xmlhttp.send();
- *       };
- *
- *       // Initialize locale data
- *       this._initLocaleData = function(locale) {
- *         let links = document.querySelectorAll('link[rel="localization"]');
- *         if (links !== null && links.length > 0) {
- *           for (let i = 0; i < links.length; i++) {
- *             const hreflang = links[i].getAttribute('hreflang');
- *             if (hreflang === locale) {
- *               self._fetchLocaleData(links[i].getAttribute('href'));
- *               break;
- *             }
- *           }
- *         }
- *       };
- *       this._initLocaleData(locale);
- *     };
- *     return new I18nUtil("de-DE");
- *   }();
- * </script>
- * <pf-i18n mixin="i18n">
- *
- * @example <caption>Example task for compiling .po files to JSON, formatted for Jed:</caption>
- * gulp.task('gettext-compile', function() {
- *   return gulp.src('src/po/** /*.po')
- *     .pipe(po2json({
- *       pretty: true,
- *       format: 'jed1.x'
- *     }))
- *     .pipe(gulp.dest("dist/i18n"));
- * });
- *
- * @prop {string} mixin i18n or custom mixin name
- */
-var PfI18n = exports.PfI18n = function (_HTMLElement) {
-  _inherits(PfI18n, _HTMLElement);
-
-  _createClass(PfI18n, [{
-    key: 'attributeChangedCallback',
-
-
-    /**
-     * Called when element's attribute value has changed
-     *
-     * @param {string} attrName The attribute name that has changed
-     * @param {string} oldValue The old attribute value
-     * @param {string} newValue The new attribute value
-     */
-    value: function attributeChangedCallback(attrName, oldValue, newValue) {
-      this._init();
-    }
-
-    /*
-     * An instance of the element is created or upgraded
-     */
-
-  }], [{
-    key: 'observedAttributes',
-
-
-    /*
-     * Only attributes listed in the observedAttributes property will receive this callback
-     */
-    get: function get() {
-      return ['mixin'];
-    }
-  }]);
-
-  function PfI18n() {
-    _classCallCheck(this, PfI18n);
-
-    var _this = _possibleConstructorReturn(this, (PfI18n.__proto__ || Object.getPrototypeOf(PfI18n)).call(this));
-
-    _this._init();
-    return _this;
-  }
-
-  /**
-   * Helper function to init i18n mixin
-   * @private
-   */
-
-
-  _createClass(PfI18n, [{
-    key: '_init',
-    value: function _init() {
-      if (this.getAttribute('mixin') !== null) {
-        var mixin = new Function('return ' + this.getAttribute('mixin'));
-        _i18nUtils.i18n.setMixin(mixin());
-      }
-    }
-  }]);
-
-  return PfI18n;
-}(HTMLElement);
-
-window.customElements.define('pf-i18n', PfI18n);
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.PfHello = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _pfHello = __webpack_require__(34);
-
-var _pfHello2 = _interopRequireDefault(_pfHello);
-
-var _i18nUtils = __webpack_require__(1);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/**
- * <b>&lt;pf-hello&gt;</b> element for Patternfly Web Components
- *
- * @example {@lang xml}
- * <pf-hello></pf-hello>
- */
-var PfHello = exports.PfHello = function (_HTMLElement) {
-  _inherits(PfHello, _HTMLElement);
-
-  _createClass(PfHello, [{
-    key: 'connectedCallback',
-
-    /*
-     * Called every time the element is inserted into the DOM
-     */
-    value: function connectedCallback() {
-      this.appendChild(this._template.content);
-    }
-
-    /*
-     * Only attributes listed in the observedAttributes property will receive this callback
-     */
-
-  }, {
-    key: 'attributeChangedCallback',
-
-
-    /**
-     * Called when element's attribute value has changed
-     *
-     * @param {string} attrName The attribute name that has changed
-     * @param {string} oldValue The old attribute value
-     * @param {string} newValue The new attribute value
-     */
-    value: function attributeChangedCallback(attrName, oldValue, newValue) {
-      this.refresh();
-    }
-
-    /*
-     * An instance of the element is created or upgraded
-     */
-
-  }], [{
-    key: 'observedAttributes',
-    get: function get() {
-      return ['text'];
-    }
-  }]);
-
-  function PfHello() {
-    _classCallCheck(this, PfHello);
-
-    var _this = _possibleConstructorReturn(this, (PfHello.__proto__ || Object.getPrototypeOf(PfHello)).call(this));
-
-    _this._template = document.createElement('template');
-    _this._template.innerHTML = _pfHello2.default;
-    _this.refresh();
-    return _this;
-  }
-
-  /**
-   * Get nodes from given selector
-   *
-   * @param selector The query selector identifying the elements to retrieve
-   * @returns {Element}
-   * @private
-   */
-
-
-  _createClass(PfHello, [{
-    key: '_getNodes',
-    value: function _getNodes(selector) {
-      var el = this.querySelectorAll(selector);
-      if (el.length === 0) {
-        el = this._template.content.querySelectorAll(selector);
-      }
-      return el;
-    }
-
-    /**
-     * Helper function to init text
-     * @private
-     */
-
-  }, {
-    key: 'refresh',
-    value: function refresh() {
-      var nodes = this._getNodes('span');
-      var el = nodes[nodes.length - 1];
-      el.innerHTML = _i18nUtils.i18n.gettext("Hello World!");
-    }
-  }]);
-
-  return PfHello;
-}(HTMLElement);
-
-window.customElements.define('pf-hello', PfHello);
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var PfHelloTemplate = "\n<span></span>\n";
-exports.default = PfHelloTemplate;
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.PfPopover = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _pfPopover = __webpack_require__(36);
-
-var _pfPopover2 = _interopRequireDefault(_pfPopover);
-
-var _pfUtils = __webpack_require__(0);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/**
- * <b>&lt;pf-popover&gt;</b> element for Patternfly Web Components
- *
- * @example {@lang xml}
- * <pf-popover animation="fade" target-selector="#btn-left" placement="left" delay="100" duration="150" popover-title="Popover Title" dismissible="true" container-selector="#container"></pf-alert>
- *
- * @prop {string} animation the animation class
- * @prop {string} target-selector the target element selector
- * @prop {string} placement left, right, top, bottom
- * @prop {string} popover-title the title of popover
- * @prop {string} dismissible true, false
- * @prop {number} delay animation delay (ms)
- * @prop {number} duration animation duration (ms)
- * @prop {string} container-selector the container element selector
- */
-
-var PfPopover = exports.PfPopover = function (_HTMLElement) {
-  _inherits(PfPopover, _HTMLElement);
-
-  _createClass(PfPopover, [{
-    key: 'init',
-
-
-    /**
-     * Reinitializes popover component with attribute values and resets content
-     */
-    value: function init() {
-      var _this2 = this;
-
-      this.element = this;
-      this.content = this._innerHtml || this.element.innerHTML;
-      this.popover = null;
-      this._targetSelector = this.getAttribute('target-selector');
-      this._target = this._targetSelector ? document.querySelector(this._targetSelector) : this;
-      this._animation = this.getAttribute('animation') ? this.getAttribute('animation') : 'fade';
-      this._popoverTitle = this.getAttribute('popover-title') ? this.getAttribute('popover-title') : '';
-      this._dismissible = this.getAttribute('dismissible') ? this.getAttribute('dismissible') : false;
-      this._placement = this.getAttribute('placement') ? this.getAttribute('placement') : 'right';
-      this._delay = parseInt(this.getAttribute('delay')) || 100;
-      this._duration = _pfUtils.pfUtil.isMSIE && _pfUtils.pfUtil.isMSIE < 10 ? 0 : parseInt(this.getAttribute('duration')) || 150;
-      this._containerSelector = this.getAttribute('container-selector');
-      this._container = this._containerSelector ? document.querySelector(this._containerSelector) : document.body;
-
-      if (this._target) {
-        //create open event listeners
-        this._target.addEventListener('click', function (e) {
-          if (_this2.popover !== null) {
-            _this2.close(e);
-          } else {
-            _this2.open(e);
-          }
-        }, false);
-      }
-
-      if (this._dismissible) {
-
-        document.addEventListener('click', function (event) {
-          if (_this2.popover !== null && event.target === _this2.popover.querySelector('div.popover > h3.popover-title .close > span.pficon-close')) {
-            _this2.close();
-          }
-        }, false);
-      }
-    }
-
-    /**
-     * Called when an instance was inserted into the document
-     */
-
-  }, {
-    key: 'connectedCallback',
-    value: function connectedCallback() {
-      var _this3 = this;
-
-      this.init();
-
-      //handleContentChanged
-      this.element.addEventListener('handleContentChanged', function (e) {
-        _this3.init();
-      }, false);
-    }
-
-    /*
-     * Only attributes listed in the observedAttributes property will receive this callback
-     */
-
-  }, {
-    key: 'attributeChangedCallback',
-
-
-    /**
-     * Called when element's attribute value has changed
-     *
-     * @param {string} attrName The attribute name that has changed
-     * @param {string} oldValue The old attribute value
-     * @param {string} newValue The new attribute value
-     */
-    value: function attributeChangedCallback(attrName, oldValue, newValue) {
-      this.init();
-    }
-
-    /**
-     * An instance of the element is created or upgraded
-     */
-
-  }], [{
-    key: 'observedAttributes',
-    get: function get() {
-      return ['animation', 'target-selector', 'placement', 'delay', 'duration', 'container-selector', 'popover-title'];
-    }
-  }]);
-
-  function PfPopover() {
-    _classCallCheck(this, PfPopover);
-
-    var _this = _possibleConstructorReturn(this, (PfPopover.__proto__ || Object.getPrototypeOf(PfPopover)).call(this));
-
-    _this._template = document.createElement('template');
-    _this._template.innerHTML = _pfPopover2.default;
-    _this._timer = 0;
-    return _this;
-  }
-
-  /**
-   * Sets popover the inner HTML
-   * @param {string} html string
-   */
-
-
-  _createClass(PfPopover, [{
-    key: 'setInnerHtml',
-    value: function setInnerHtml(html) {
-      this._innerHtml = html;
-      this.element.dispatchEvent(new CustomEvent('handleContentChanged', {}));
-    }
-
-    /**
-     * public handler
-     */
-
-  }, {
-    key: 'toggle',
-    value: function toggle() {
-      this.init();
-      if (this.popover === null) {
-        this.open();
-      } else {
-        this.close();
-      }
-    }
-
-    /**
-     * Get the animation class
-     *
-     * @returns {string} The animation class
-     */
-
-  }, {
-    key: 'open',
-
-
-    /**
-       * The popover open method
-       */
-    value: function open() {
-      var _this4 = this;
-
-      clearTimeout(this._timer);
-      this._timer = setTimeout(function () {
-        if (_this4.popover === null) {
-          _this4._createPopover();
-          _this4._stylePopover();
-          _this4._checkPlacement();
-          _this4._showPopover();
-          //notify frameworks
-          _this4.dispatchEvent(new CustomEvent('pf-popover.opened', {}));
-        }
-      }, 20);
-    }
-
-    /**
-     * The popover close method
-     */
-
-  }, {
-    key: 'close',
-    value: function close() {
-      var _this5 = this;
-
-      clearTimeout(this._timer);
-      this._timer = setTimeout(function () {
-        if (_this5.popover && _this5.popover !== null) {
-          _pfUtils.pfUtil.removeClass(_this5.popover, 'in');
-          setTimeout(function () {
-            _this5._removePopover();
-            //notify frameworks
-            _this5.dispatchEvent(new CustomEvent('pf-popover.closed', {}));
-            // reset position after popover is closed
-            _this5._placement = _this5.getAttribute('placement') ? _this5.getAttribute('placement') : 'right';
-          }, _this5._duration);
-        }
-      }, this._delay + this._duration);
-    }
-
-    /**
-     * Removes the popover
-     * @private
-     */
-
-  }, {
-    key: '_removePopover',
-    value: function _removePopover() {
-      this.popover && this._container.removeChild(this.popover);
-      this.popover = null;
-    }
-
-    /**
-     * Creates the popover
-     * @private
-     */
-
-  }, {
-    key: '_createPopover',
-    value: function _createPopover() {
-      var clone = document.importNode(this._template.content, true);
-      var popoverInner = clone.querySelector('.popover-content');
-      var popovertitle = clone.querySelector('.popover-title');
-      var closeButton = document.createElement('template');
-      closeButton.innerHTML = '<button type="button" class="close"><span class="pficon pficon-close"></span></button>';
-
-      if (this._popoverTitle === '' && !this._dismissible) {
-        popovertitle.parentNode.removeChild(popovertitle);
-      } else {
-        //set popover title
-        popovertitle.innerHTML = this._popoverTitle;
-
-        if (this._dismissible) {
-          popovertitle.appendChild(closeButton.content);
-        }
-      }
-      //set popover content
-      popoverInner.innerHTML = this.content;
-
-      //append to the container
-      this._container.appendChild(clone);
-
-      //set reference to appended node
-      this.popover = this._container.querySelectorAll('.popover:last-child')[0];
-      this.popover.style.display = 'block';
-      this.popover.setAttribute('class', 'popover ' + this._placement + ' ' + this._animation);
-    }
-
-    /**
-     * update the placement of popover
-     */
-
-  }, {
-    key: '_updatePlacement',
-    value: function _updatePlacement() {
-      switch (this._placement) {
-        case 'top':
-          return 'bottom';
-        case 'bottom':
-          return 'top';
-        case 'left':
-          return 'right';
-        case 'right':
-          return 'left';
-        default:
-          return this._placement;
-      }
-    }
-
-    /**
-     * Styles the popover based on placement attribute
-     * @private
-     */
-
-  }, {
-    key: '_stylePopover',
-    value: function _stylePopover() {
-      var rect = this._target.getBoundingClientRect(); //popover real dimensions
-
-      var // link rect | window vertical and horizontal scroll
-      scroll = _pfUtils.pfUtil.getScroll();
-
-      var //link real dimensions
-      linkDimensions = { w: rect.right - rect.left, h: rect.bottom - rect.top };
-
-      var popoverDimensions = { w: this.popover.offsetWidth, h: this.popover.offsetHeight };
-
-      //apply styling
-      switch (this._placement) {
-        case 'top':
-          //TOP
-          this.popover.style.top = rect.top + scroll.y - popoverDimensions.h + 'px';
-          this.popover.style.left = rect.left + scroll.x - popoverDimensions.w / 2 + linkDimensions.w / 2 + 'px';
-          break;
-
-        case 'bottom':
-          //BOTTOM
-          this.popover.style.top = rect.top + scroll.y + linkDimensions.h + 'px';
-          this.popover.style.left = rect.left + scroll.x - popoverDimensions.w / 2 + linkDimensions.w / 2 + 'px';
-          break;
-
-        case 'left':
-          //LEFT
-          this.popover.style.top = rect.top + scroll.y - popoverDimensions.h / 2 + linkDimensions.h / 2 + 'px';
-          this.popover.style.left = rect.left + scroll.x - popoverDimensions.w + 'px';
-          break;
-
-        case 'right':
-          //RIGHT
-          this.popover.style.top = rect.top + scroll.y - popoverDimensions.h / 2 + linkDimensions.h / 2 + 'px';
-          this.popover.style.left = rect.left + scroll.x + linkDimensions.w + 'px';
-          break;
-      }
-      this.popover.className.indexOf(this._placement) === -1 && (this.popover.className = this.popover.className.replace(/\b(top|bottom|left|right)+/, this._placement));
-    }
-
-    /**
-     * check the placement of popover
-     */
-
-  }, {
-    key: '_checkPlacement',
-    value: function _checkPlacement() {
-      if (!_pfUtils.pfUtil.isElementInViewport(this.popover)) {
-        this._placement = this._updatePlacement();
-        this._stylePopover();
-      }
-    }
-
-    /**
-     * Makes popover visible
-     * @private
-     */
-
-  }, {
-    key: '_showPopover',
-    value: function _showPopover() {
-      !/\bin/.test(this.popover.className) && _pfUtils.pfUtil.addClass(this.popover, 'in');
-    }
-  }, {
-    key: 'animation',
-    get: function get() {
-      return this._animation;
-    }
-
-    /**
-     * Set animation class
-     *
-     * @param {string} value The animation class
-     */
-    ,
-    set: function set(value) {
-      if (this._animation !== value) {
-        this._animation = value;
-        this.setAttribute('animation', value);
-      }
-    }
-
-    /**
-     * Get the popover container-selector
-     *
-     * @returns {string} The container element selector
-     */
-
-  }, {
-    key: 'containerSelector',
-    get: function get() {
-      return this._containerSelector;
-    }
-
-    /**
-     * Set the popover container-selector
-     *
-     * @param {string} value The container element selector
-     */
-    ,
-    set: function set(value) {
-      if (this._containerSelector !== value) {
-        this._containerSelector = value;
-        this._container = document.querySelector(this._containerSelector);
-        this.setAttribute('container-selector', value);
-      }
-    }
-
-    /**
-     * Get the animation duration
-     *
-     * @returns {string} The animation duration
-     */
-
-  }, {
-    key: 'duration',
-    get: function get() {
-      return this._duration;
-    }
-
-    /**
-     * Set the animation duration
-     *
-     * @param {string} value The animation duration
-     */
-    ,
-    set: function set(value) {
-      if (this._duration !== value) {
-        this._duration = value;
-        this.setAttribute('duration', value);
-      }
-    }
-
-    /**
-     * Get the animation delay
-     *
-     * @returns {string} The animation delay
-     */
-
-  }, {
-    key: 'delay',
-    get: function get() {
-      return this._duration;
-    }
-
-    /**
-     * Set the animation delay
-     *
-     * @param {string} value The animation delay
-     */
-    ,
-    set: function set(value) {
-      if (this._delay !== value) {
-        this._delay = value;
-        this.setAttribute('delay', value);
-      }
-    }
-
-    /**
-     * Get the placement this._placement
-     *
-     * @returns {string} The placement this._placement left, top, bottom, right
-     */
-
-  }, {
-    key: 'placement',
-    get: function get() {
-      return this._placement;
-    }
-
-    /**
-     * Set placement this._placement
-     *
-     * @param {string} value The placement this._placement left, top, bottom, right
-     */
-    ,
-    set: function set(value) {
-      if (this._placement !== value) {
-        this._placement = value;
-        this.setAttribute('placement', value);
-      }
-    }
-
-    /**
-    * Get the target-selector
-    *
-    * @returns {string} The target element selector
-    */
-
-  }, {
-    key: 'targetSelector',
-    get: function get() {
-      return this._targetSelector;
-    }
-
-    /**
-     * Set target-selector
-     *
-     * @param {string} value The target element selector
-     */
-    ,
-    set: function set(value) {
-      if (this._targetSelector !== value) {
-        this._targetSelector = value;
-        this._target = document.querySelector(this._targetSelector);
-        this.setAttribute('target-selector', value);
-      }
-    }
-
-    /**
-     * Get the popover-title
-     *
-     * @return {string} the title of popover
-     */
-
-  }, {
-    key: 'popoverTitle',
-    get: function get() {
-      return this._popoverTitle;
-    }
-
-    /**
-     * Set popover-title
-     *
-     * @param {string} value The title of popover
-     */
-    ,
-    set: function set(value) {
-      if (this._popoverTitle !== value) {
-        this._popoverTitle = value;
-        this.setAttribute('popover-title', value);
-      }
-    }
-  }]);
-
-  return PfPopover;
-}(HTMLElement);
-
-window.customElements.define('pf-popover', PfPopover);
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var PfPopoverTemplate = "\n<div class=\"popover\" role=\"popover\">\n  <div class=\"arrow\"></div>\n  <h3 class=\"popover-title closable\"></h3>\n  <div class=\"popover-content\"></div>\n</div>\n";
-
-exports.default = PfPopoverTemplate;
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 exports.PfSwitch = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _pfSwitch = __webpack_require__(38);
+var _pfSwitch = __webpack_require__(29);
 
 var _pfSwitch2 = _interopRequireDefault(_pfSwitch);
 
@@ -6258,7 +4952,7 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
 })();
 
 /***/ }),
-/* 38 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6271,6 +4965,1312 @@ var PfSwitchTemplate = "\n<div class=\"bootstrap-switch bootstrap-switch-wrapper
 exports.default = PfSwitchTemplate;
 
 /***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PfListView = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _pfListViewTemplate = __webpack_require__(31);
+
+var _pfListViewTemplate2 = _interopRequireDefault(_pfListViewTemplate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var forEach = Array.prototype.forEach;
+
+/**
+ * <b>&lt;pf-list-view&gt;</b> element for Patternfly Web Components
+ *
+ * @example {@lang xml}
+ * <pf-list-view id="example1" show-checkboxes="true">
+ *  <pf-template-repeater id="example1-content" content='[{"name": "Big Bird", "address": "1 Seaseme Street"}]'>
+ *    <pf-template>
+ *      <div class="list-view-pf-description">
+ *        <div class="list-group-item-heading">
+ *          ${name}
+ *        </div>
+ *        <div class="list-group-item-text">
+ *          ${address}
+ *        </div>
+ *      </div>
+ *    </pf-template>
+ *  </pf-template-repeater>
+ * </pf-list-view>
+ *
+ * @prop {string} show-checkboxes whether to show list-view checkboxes
+ */
+
+var PfListView = exports.PfListView = function (_HTMLElement) {
+  _inherits(PfListView, _HTMLElement);
+
+  /*
+   * An instance of the element is created or upgraded
+   */
+  function PfListView() {
+    _classCallCheck(this, PfListView);
+
+    // Listen for when the child template-repeater updates it's content
+    // ie. repeates the user defined template and replaces $(name) with actual values
+    var _this = _possibleConstructorReturn(this, (PfListView.__proto__ || Object.getPrototypeOf(PfListView)).call(this));
+
+    _this.addEventListener("pf-template-repeater.ContentChanged", function (e) {
+      this.handleRepeaterContentChanged();
+    });
+    return _this;
+  }
+
+  /*
+   * Only attributes listed in the observedAttributes property will receive this callback
+   */
+
+
+  _createClass(PfListView, [{
+    key: 'attributeChangedCallback',
+
+
+    /**
+     * Called when element's attribute value has changed
+     *
+     * @param {string} attrName The attribute name that has changed
+     * @param {string} oldValue The old attribute value
+     * @param {string} newValue The new attribute value
+     */
+    value: function attributeChangedCallback(attributeName, oldValue, newValue) {
+      this.showHideCheckboxes();
+    }
+
+    /**
+     * Called when repeater content changes (updates content)
+     */
+
+  }, {
+    key: 'handleRepeaterContentChanged',
+    value: function handleRepeaterContentChanged() {
+      this.updateComponent();
+      this.updateCheckboxes();
+      this.updateActionButtons();
+    }
+
+    /**
+     * This method updates the overall list view and each repeated row/item in the list.
+     * @example {@lang xml}
+     *  <pf-list-view>
+     *    <pf-template-repeater content='[{"name": "Fred Flintstone", "address": "20 Dinosaur Way"}, {"name": "John Smith", "address": "415 ...'
+     *      <pf-template>
+     *        <div class="list-view-pf-description">
+     *          <div class="list-group-item-heading">
+     *            ${name}
+     *          ...
+     */
+
+  }, {
+    key: 'updateComponent',
+    value: function updateComponent() {
+
+      this._template = document.createElement('template');
+      this._template.innerHTML = _pfListViewTemplate2.default;
+
+      // get repeated templates
+      var repeatedTemplates = this.querySelectorAll('pf-template');
+
+      for (var i = 0; i < repeatedTemplates.length; i++) {
+        var template = repeatedTemplates[i];
+
+        var itemRowTemplate = document.createElement('template');
+        itemRowTemplate.innerHTML = _pfListViewTemplate.itemRow;
+
+        // Where the transclude happens
+        itemRowTemplate.content.querySelector('.list-view-pf-main-info').innerHTML = template.innerHTML;
+
+        this._template.content.querySelector('.list-view-pf').appendChild(itemRowTemplate.content);
+      }
+
+      this.innerHTML = this._template.innerHTML;
+
+      /**
+       * This method updated the component to:
+       * Ie.
+       *  <pf-list-view>
+       *    <div class="list-group list-view-pf" >
+       *      <pf-template-repeater content='[{"name": "Fred Flintstone", "address": "20 Dinosaur Way"}, {"name": "John Smith", "address": "415 ...
+       *        <pf-template>
+       *          <div class="list-group-item">
+       *            <div class="list-group-item-header">
+       *              <div class="list-view-pf-checkbox">
+       *                <input type="checkbox">
+       *              </div>
+       *              <div class="list-view-pf-main-info">
+       *                <div class="list-view-pf-description">
+       *                  ${name}
+       *                ...
+       *
+       */
+    }
+  }, {
+    key: 'updateCheckboxes',
+    value: function updateCheckboxes() {
+      this.showHideCheckboxes();
+      this.listenForCheckboxChanges();
+    }
+  }, {
+    key: 'updateActionButtons',
+    value: function updateActionButtons() {
+      var _this2 = this;
+
+      var actionButtons = PfListView.fromJson(this.getAttribute("action-buttons"));
+      // Get the headers of each row
+      var headers = this.querySelectorAll('.list-group-item-header');
+
+      // wish forEach worked with NodeLists :-(
+
+      var _loop = function _loop(i) {
+        var header = headers[i];
+        var actions = document.createElement('div');
+        actions.classList = "list-view-pf-actions";
+        actionButtons.forEach(function (button) {
+          var btn = document.createElement('button');
+          btn.innerHTML = button.name;
+          btn.classList = "btn btn-default" + (button.class ? " " + button.class : "");
+          btn.title = button.title;
+          btn.actionType = button.actionType;
+          btn.itemId = header.lastElementChild.innerText.replace(/\s+/g, ' ').trim();
+          // btn.onclick = this.handleActionButtonClick;   <-- why can't I get this way to work?!
+          btn.addEventListener("click", this.handleActionButtonClick);
+          actions.appendChild(btn);
+        }, _this2);
+
+        var refNode = header.querySelector('.list-view-pf-checkbox');
+        header.insertBefore(actions, refNode);
+      };
+
+      for (var i = 0; i < headers.length; i++) {
+        _loop(i);
+      }
+    }
+  }, {
+    key: 'handleActionButtonClick',
+    value: function handleActionButtonClick(e) {
+      var actionType = e.currentTarget.actionType;
+      var itemId = e.currentTarget.itemId;
+
+      var event = new CustomEvent('pf-list-view.ItemActionInitiated', { "actionType": actionType, "itemId": itemId });
+      event.initCustomEvent('pf-list-view.ItemActionInitiated', true, true, { "actionType": actionType, "itemId": itemId });
+      this.dispatchEvent(event);
+    }
+  }, {
+    key: 'showHideCheckboxes',
+    value: function showHideCheckboxes() {
+      var showCheckboxes = this.getAttribute("show-checkboxes");
+      var checkboxes = this.querySelectorAll('input[type="checkbox"]');
+      for (var i = 0; i < checkboxes.length; i++) {
+        var checkbox = checkboxes[i];
+        if (showCheckboxes === undefined || showCheckboxes === 'true') {
+          checkbox.parentNode.style.display = "";
+        } else {
+          checkbox.parentNode.style.display = "none";
+        }
+      }
+    }
+  }, {
+    key: 'listenForCheckboxChanges',
+    value: function listenForCheckboxChanges() {
+      var showCheckboxes = this.getAttribute("show-checkboxes");
+      if (showCheckboxes === undefined || showCheckboxes === 'true') {
+        var checkboxes = this.querySelectorAll('input[type="checkbox"]');
+        for (var i = 0; i < checkboxes.length; i++) {
+          var checkbox = checkboxes[i];
+          // TODO: kind of hacky, need a better way to do this
+          var itemId = checkbox.parentNode.parentNode.lastElementChild.innerText.replace(/\s+/g, ' ').trim();
+          checkbox.value = itemId;
+          // there can only be one
+          checkbox.removeEventListener("pf-list-view.change", handleCheckboxChange);
+          checkbox.addEventListener("pf-list-view.change", handleCheckboxChange);
+        }
+      }
+
+      function handleCheckboxChange(e) {
+        // TODO: keep track of selected items/rows, for now just output
+        var checkbox = e.currentTarget;
+        // TODO: this seems very fragile, what if HTML hierarchy changes?  Need better way.
+        checkbox.parentNode.parentNode.parentNode.classList.toggle('active');
+
+        var msg = (checkbox.checked ? "Selected: " : "Unselected: ") + checkbox.value;
+        var event = new CustomEvent('pf-list-view.RowSelectionChanged', { "value": msg });
+        event.initCustomEvent('pf-list-view.RowSelectionChanged', true, true, { "value": msg });
+        this.dispatchEvent(event);
+      }
+    }
+  }], [{
+    key: 'fromJson',
+    value: function fromJson(str) {
+      var obj = [];
+      if (typeof str === "string") {
+        try {
+          obj = JSON.parse(str);
+        } catch (e) {
+          // throw new Error("Invalid JSON string provided. ");
+        }
+      }
+      return obj;
+    }
+  }, {
+    key: 'observedAttributes',
+    get: function get() {
+      return ['show-checkboxes'];
+    }
+  }]);
+
+  return PfListView;
+}(HTMLElement);
+
+window.customElements.define('pf-list-view', PfListView);
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var pfListViewDefault = "\n<div class=\"list-group list-view-pf\">\n</div>";
+
+var pfListItem = "\n<div class=\"list-group-item\">\n  <div class=\"list-group-item-header\">\n    <div class=\"list-view-pf-checkbox\">\n      <input type=\"checkbox\">\n    </div>\n    <div class=\"list-view-pf-main-info\">\n    </div>\n  </div>\n</div>\n";
+
+exports.default = pfListViewDefault;
+exports.itemRow = pfListItem;
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * <b>&lt;pf-template-repeater&gt;</b> element for Patternfly Web Components
+ *
+ * This is a fork of a template-repeater: <a href="http://github.com/Nevraeka/template-repeater">http://github.com/Nevraeka/template-repeater</a>
+ *
+ * @example {@lang xml}
+ * <pf-template-repeater id="example1-content" content='[{"name": "Big Bird", "address": "1 Seaseme Street"}]'>
+ *
+ *
+ * @prop {string} content the json stringified content
+ */
+
+var PFTemplateRepeater = function (_HTMLElement) {
+  _inherits(PFTemplateRepeater, _HTMLElement);
+
+  function PFTemplateRepeater() {
+    _classCallCheck(this, PFTemplateRepeater);
+
+    return _possibleConstructorReturn(this, (PFTemplateRepeater.__proto__ || Object.getPrototypeOf(PFTemplateRepeater)).apply(this, arguments));
+  }
+
+  _createClass(PFTemplateRepeater, [{
+    key: "render",
+
+
+    /**
+     * Renders the &lt;pf-template&gt; using PFTemplateRepeater
+     *
+     * @param {string} val The json content
+     */
+    value: function render(val) {
+      var renderError = "Content should be an Array of objects.";
+      var template = this.template;
+      var content = PFTemplateRepeater.fromJson(val);
+      this.innerHTML = (Array.isArray(content) ? content.map(andApplyTemplate) : new Error(renderError).message).join('');
+
+      function andApplyTemplate(item) {
+        return "<pf-template>" + PFTemplateRepeater.interpolate(template.cloneNode(true), item) + "</pf-template>";
+      }
+
+      // dispatch a 'repeater content changed' event
+      var event = new CustomEvent('pf-template-repeater.ContentChanged', {});
+      event.initCustomEvent('pf-template-repeater.ContentChanged', true, true, {});
+      this.dispatchEvent(event);
+
+      return this.innerHTML;
+    }
+
+    /*
+     * Only attributes listed in the observedAttributes property will receive this callback
+     */
+
+  }, {
+    key: "attributeChangedCallback",
+
+
+    /**
+     * Called when element's attribute value has changed
+     *
+     * @param {string} attrName The attribute name that has changed
+     * @param {string} oldValue The old attribute value
+     * @param {string} newValue The new attribute value
+     */
+    value: function attributeChangedCallback(name, oldVal, newVal) {
+      if (name === "content" && typeof newVal === 'string') {
+        this.template = this.querySelector('pf-template');
+        if (this.template) {
+          this.render(newVal);
+        }
+      }
+    }
+  }], [{
+    key: "interpolate",
+    value: function interpolate(template, content) {
+      var contentArr = Object.keys(content);
+      var updatedHTML = "";
+
+      if ((typeof content === "undefined" ? "undefined" : _typeof(content)) === "object") {
+        var andIterateOverData = function andIterateOverData(item) {
+          template.innerHTML = template.innerHTML.replace("${" + item + "}", content[item]);
+        };
+
+        contentArr.forEach(andIterateOverData);
+
+        updatedHTML += template.innerHTML;
+      }
+
+      return updatedHTML;
+    }
+  }, {
+    key: "fromJson",
+    value: function fromJson(str) {
+      var obj = [];
+      if (typeof str === "string") {
+        try {
+          obj = JSON.parse(str);
+        } catch (e) {
+          // throw new Error("Invalid JSON string provided. ");
+        }
+      }
+      return obj;
+    }
+  }, {
+    key: "observedAttributes",
+    get: function get() {
+      return ['content'];
+    }
+  }]);
+
+  return PFTemplateRepeater;
+}(HTMLElement);
+
+window.customElements.define("pf-template-repeater", PFTemplateRepeater);
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PFTemplate = function (_HTMLElement) {
+  _inherits(PFTemplate, _HTMLElement);
+
+  function PFTemplate() {
+    _classCallCheck(this, PFTemplate);
+
+    return _possibleConstructorReturn(this, (PFTemplate.__proto__ || Object.getPrototypeOf(PFTemplate)).apply(this, arguments));
+  }
+
+  return PFTemplate;
+}(HTMLElement);
+
+window.customElements.define("pf-template", PFTemplate);
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PfI18n = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _i18nUtils = __webpack_require__(1);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * <b>&lt;pf-i18n&gt;</b> element for Patternfly Web Components
+ *
+ * @example <caption>Example with object literal:</caption> {@lang xml}
+ * <script>
+ *   var i18n = {
+ *     "Hello World!": "Hello World! (de-DE)"
+ *   };
+ * <script>
+ * <pf-i18n mixin="i18n">
+ *
+ * @example <caption>Example with Jed and translated JSON files:</caption> {@lang xml}
+ * <link rel="localization" href="/app/i18n/fr/patternfly.json" hreflang="fr">
+ * <link rel="localization" href="/app/i18n/de-DE/patternfly.json" hreflang="de-DE">
+ * <script src="//cdnjs.cloudflare.com/ajax/libs/jed/1.1.1/jed.min.js"></script>
+ * <script>
+ *   var i18n = function() {
+ *     var I18nUtil = function (locale) {
+ *       var self = this;
+ *
+ *       // NOTE: This function is required for the pf-i18n tag to retrieve translated messages.
+ *       this.getMsg = function (key) {
+ *         return self.jed.gettext(key);
+ *       };
+ *
+ *       // Fetch locale data
+ *       this._fetchLocaleData = function(url) {
+ *         let xmlhttp = new XMLHttpRequest();
+ *         xmlhttp.onreadystatechange = function () {
+ *           if (this.readyState === 4 && this.status === 200) {
+ *             const localeData = JSON.parse(this.responseText);
+ *             self.jed = new Jed(localeData);
+ *           }
+ *         };
+ *         xmlhttp.open("GET", url, false);
+ *         xmlhttp.send();
+ *       };
+ *
+ *       // Initialize locale data
+ *       this._initLocaleData = function(locale) {
+ *         let links = document.querySelectorAll('link[rel="localization"]');
+ *         if (links !== null && links.length > 0) {
+ *           for (let i = 0; i < links.length; i++) {
+ *             const hreflang = links[i].getAttribute('hreflang');
+ *             if (hreflang === locale) {
+ *               self._fetchLocaleData(links[i].getAttribute('href'));
+ *               break;
+ *             }
+ *           }
+ *         }
+ *       };
+ *       this._initLocaleData(locale);
+ *     };
+ *     return new I18nUtil("de-DE");
+ *   }();
+ * </script>
+ * <pf-i18n mixin="i18n">
+ *
+ * @example <caption>Example task for compiling .po files to JSON, formatted for Jed:</caption>
+ * gulp.task('gettext-compile', function() {
+ *   return gulp.src('src/po/** /*.po')
+ *     .pipe(po2json({
+ *       pretty: true,
+ *       format: 'jed1.x'
+ *     }))
+ *     .pipe(gulp.dest("dist/i18n"));
+ * });
+ *
+ * @prop {string} mixin i18n or custom mixin name
+ */
+var PfI18n = exports.PfI18n = function (_HTMLElement) {
+  _inherits(PfI18n, _HTMLElement);
+
+  _createClass(PfI18n, [{
+    key: 'attributeChangedCallback',
+
+
+    /**
+     * Called when element's attribute value has changed
+     *
+     * @param {string} attrName The attribute name that has changed
+     * @param {string} oldValue The old attribute value
+     * @param {string} newValue The new attribute value
+     */
+    value: function attributeChangedCallback(attrName, oldValue, newValue) {
+      this._init();
+    }
+
+    /*
+     * An instance of the element is created or upgraded
+     */
+
+  }], [{
+    key: 'observedAttributes',
+
+
+    /*
+     * Only attributes listed in the observedAttributes property will receive this callback
+     */
+    get: function get() {
+      return ['mixin'];
+    }
+  }]);
+
+  function PfI18n() {
+    _classCallCheck(this, PfI18n);
+
+    var _this = _possibleConstructorReturn(this, (PfI18n.__proto__ || Object.getPrototypeOf(PfI18n)).call(this));
+
+    _this._init();
+    return _this;
+  }
+
+  /**
+   * Helper function to init i18n mixin
+   * @private
+   */
+
+
+  _createClass(PfI18n, [{
+    key: '_init',
+    value: function _init() {
+      if (this.getAttribute('mixin') !== null) {
+        var mixin = new Function('return ' + this.getAttribute('mixin'));
+        _i18nUtils.i18n.setMixin(mixin());
+      }
+    }
+  }]);
+
+  return PfI18n;
+}(HTMLElement);
+
+window.customElements.define('pf-i18n', PfI18n);
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PfHello = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _pfHello = __webpack_require__(36);
+
+var _pfHello2 = _interopRequireDefault(_pfHello);
+
+var _i18nUtils = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * <b>&lt;pf-hello&gt;</b> element for Patternfly Web Components
+ *
+ * @example {@lang xml}
+ * <pf-hello></pf-hello>
+ */
+var PfHello = exports.PfHello = function (_HTMLElement) {
+  _inherits(PfHello, _HTMLElement);
+
+  _createClass(PfHello, [{
+    key: 'connectedCallback',
+
+    /*
+     * Called every time the element is inserted into the DOM
+     */
+    value: function connectedCallback() {
+      this.appendChild(this._template.content);
+    }
+
+    /*
+     * Only attributes listed in the observedAttributes property will receive this callback
+     */
+
+  }, {
+    key: 'attributeChangedCallback',
+
+
+    /**
+     * Called when element's attribute value has changed
+     *
+     * @param {string} attrName The attribute name that has changed
+     * @param {string} oldValue The old attribute value
+     * @param {string} newValue The new attribute value
+     */
+    value: function attributeChangedCallback(attrName, oldValue, newValue) {
+      this.refresh();
+    }
+
+    /*
+     * An instance of the element is created or upgraded
+     */
+
+  }], [{
+    key: 'observedAttributes',
+    get: function get() {
+      return ['text'];
+    }
+  }]);
+
+  function PfHello() {
+    _classCallCheck(this, PfHello);
+
+    var _this = _possibleConstructorReturn(this, (PfHello.__proto__ || Object.getPrototypeOf(PfHello)).call(this));
+
+    _this._template = document.createElement('template');
+    _this._template.innerHTML = _pfHello2.default;
+    _this.refresh();
+    return _this;
+  }
+
+  /**
+   * Get nodes from given selector
+   *
+   * @param selector The query selector identifying the elements to retrieve
+   * @returns {Element}
+   * @private
+   */
+
+
+  _createClass(PfHello, [{
+    key: '_getNodes',
+    value: function _getNodes(selector) {
+      var el = this.querySelectorAll(selector);
+      if (el.length === 0) {
+        el = this._template.content.querySelectorAll(selector);
+      }
+      return el;
+    }
+
+    /**
+     * Helper function to init text
+     * @private
+     */
+
+  }, {
+    key: 'refresh',
+    value: function refresh() {
+      var nodes = this._getNodes('span');
+      var el = nodes[nodes.length - 1];
+      el.innerHTML = _i18nUtils.i18n.gettext("Hello World!");
+    }
+  }]);
+
+  return PfHello;
+}(HTMLElement);
+
+window.customElements.define('pf-hello', PfHello);
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var PfHelloTemplate = "\n<span></span>\n";
+exports.default = PfHelloTemplate;
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PfPopover = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _pfPopover = __webpack_require__(38);
+
+var _pfPopover2 = _interopRequireDefault(_pfPopover);
+
+var _pfUtils = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * <b>&lt;pf-popover&gt;</b> element for Patternfly Web Components
+ *
+ * @example {@lang xml}
+ * <pf-popover animation="fade" target-selector="#btn-left" placement="left" delay="100" duration="150" popover-title="Popover Title" dismissible="true" container-selector="#container"></pf-alert>
+ *
+ * @prop {string} animation the animation class
+ * @prop {string} target-selector the target element selector
+ * @prop {string} placement left, right, top, bottom
+ * @prop {string} popover-title the title of popover
+ * @prop {string} dismissible true, false
+ * @prop {number} delay animation delay (ms)
+ * @prop {number} duration animation duration (ms)
+ * @prop {string} container-selector the container element selector
+ */
+
+var PfPopover = exports.PfPopover = function (_HTMLElement) {
+  _inherits(PfPopover, _HTMLElement);
+
+  _createClass(PfPopover, [{
+    key: 'init',
+
+
+    /**
+     * Reinitializes popover component with attribute values and resets content
+     */
+    value: function init() {
+      var _this2 = this;
+
+      this.element = this;
+      this.content = this._innerHtml || this.element.innerHTML;
+      this.popover = null;
+      this._targetSelector = this.getAttribute('target-selector');
+      this._target = this._targetSelector ? document.querySelector(this._targetSelector) : this;
+      this._animation = this.getAttribute('animation') ? this.getAttribute('animation') : 'fade';
+      this._popoverTitle = this.getAttribute('popover-title') ? this.getAttribute('popover-title') : '';
+      this._dismissible = this.getAttribute('dismissible') ? this.getAttribute('dismissible') : false;
+      this._placement = this.getAttribute('placement') ? this.getAttribute('placement') : 'right';
+      this._delay = parseInt(this.getAttribute('delay')) || 100;
+      this._duration = _pfUtils.pfUtil.isMSIE && _pfUtils.pfUtil.isMSIE < 10 ? 0 : parseInt(this.getAttribute('duration')) || 150;
+      this._containerSelector = this.getAttribute('container-selector');
+      this._container = this._containerSelector ? document.querySelector(this._containerSelector) : document.body;
+
+      if (this._target) {
+        //create open event listeners
+        this._target.addEventListener('click', function (e) {
+          if (_this2.popover !== null) {
+            _this2.close(e);
+          } else {
+            _this2.open(e);
+          }
+        }, false);
+      }
+
+      if (this._dismissible) {
+
+        document.addEventListener('click', function (event) {
+          if (_this2.popover !== null && event.target === _this2.popover.querySelector('div.popover > h3.popover-title .close > span.pficon-close')) {
+            _this2.close();
+          }
+        }, false);
+      }
+    }
+
+    /**
+     * Called when an instance was inserted into the document
+     */
+
+  }, {
+    key: 'connectedCallback',
+    value: function connectedCallback() {
+      var _this3 = this;
+
+      this.init();
+
+      //handleContentChanged
+      this.element.addEventListener('handleContentChanged', function (e) {
+        _this3.init();
+      }, false);
+    }
+
+    /*
+     * Only attributes listed in the observedAttributes property will receive this callback
+     */
+
+  }, {
+    key: 'attributeChangedCallback',
+
+
+    /**
+     * Called when element's attribute value has changed
+     *
+     * @param {string} attrName The attribute name that has changed
+     * @param {string} oldValue The old attribute value
+     * @param {string} newValue The new attribute value
+     */
+    value: function attributeChangedCallback(attrName, oldValue, newValue) {
+      this.init();
+    }
+
+    /**
+     * An instance of the element is created or upgraded
+     */
+
+  }], [{
+    key: 'observedAttributes',
+    get: function get() {
+      return ['animation', 'target-selector', 'placement', 'delay', 'duration', 'container-selector', 'popover-title'];
+    }
+  }]);
+
+  function PfPopover() {
+    _classCallCheck(this, PfPopover);
+
+    var _this = _possibleConstructorReturn(this, (PfPopover.__proto__ || Object.getPrototypeOf(PfPopover)).call(this));
+
+    _this._template = document.createElement('template');
+    _this._template.innerHTML = _pfPopover2.default;
+    _this._timer = 0;
+    return _this;
+  }
+
+  /**
+   * Sets popover the inner HTML
+   * @param {string} html string
+   */
+
+
+  _createClass(PfPopover, [{
+    key: 'setInnerHtml',
+    value: function setInnerHtml(html) {
+      this._innerHtml = html;
+      this.element.dispatchEvent(new CustomEvent('handleContentChanged', {}));
+    }
+
+    /**
+     * public handler
+     */
+
+  }, {
+    key: 'toggle',
+    value: function toggle() {
+      this.init();
+      if (this.popover === null) {
+        this.open();
+      } else {
+        this.close();
+      }
+    }
+
+    /**
+     * Get the animation class
+     *
+     * @returns {string} The animation class
+     */
+
+  }, {
+    key: 'open',
+
+
+    /**
+       * The popover open method
+       */
+    value: function open() {
+      var _this4 = this;
+
+      clearTimeout(this._timer);
+      this._timer = setTimeout(function () {
+        if (_this4.popover === null) {
+          _this4._createPopover();
+          _this4._stylePopover();
+          _this4._checkPlacement();
+          _this4._showPopover();
+          //notify frameworks
+          _this4.dispatchEvent(new CustomEvent('pf-popover.opened', {}));
+        }
+      }, 20);
+    }
+
+    /**
+     * The popover close method
+     */
+
+  }, {
+    key: 'close',
+    value: function close() {
+      var _this5 = this;
+
+      clearTimeout(this._timer);
+      this._timer = setTimeout(function () {
+        if (_this5.popover && _this5.popover !== null) {
+          _pfUtils.pfUtil.removeClass(_this5.popover, 'in');
+          setTimeout(function () {
+            _this5._removePopover();
+            //notify frameworks
+            _this5.dispatchEvent(new CustomEvent('pf-popover.closed', {}));
+            // reset position after popover is closed
+            _this5._placement = _this5.getAttribute('placement') ? _this5.getAttribute('placement') : 'right';
+          }, _this5._duration);
+        }
+      }, this._delay + this._duration);
+    }
+
+    /**
+     * Removes the popover
+     * @private
+     */
+
+  }, {
+    key: '_removePopover',
+    value: function _removePopover() {
+      this.popover && this._container.removeChild(this.popover);
+      this.popover = null;
+    }
+
+    /**
+     * Creates the popover
+     * @private
+     */
+
+  }, {
+    key: '_createPopover',
+    value: function _createPopover() {
+      var clone = document.importNode(this._template.content, true);
+      var popoverInner = clone.querySelector('.popover-content');
+      var popovertitle = clone.querySelector('.popover-title');
+      var closeButton = document.createElement('template');
+      closeButton.innerHTML = '<button type="button" class="close"><span class="pficon pficon-close"></span></button>';
+
+      if (this._popoverTitle === '' && !this._dismissible) {
+        popovertitle.parentNode.removeChild(popovertitle);
+      } else {
+        //set popover title
+        popovertitle.innerHTML = this._popoverTitle;
+
+        if (this._dismissible) {
+          popovertitle.appendChild(closeButton.content);
+        }
+      }
+      //set popover content
+      popoverInner.innerHTML = this.content;
+
+      //append to the container
+      this._container.appendChild(clone);
+
+      //set reference to appended node
+      this.popover = this._container.querySelectorAll('.popover:last-child')[0];
+      this.popover.style.display = 'block';
+      this.popover.setAttribute('class', 'popover ' + this._placement + ' ' + this._animation);
+    }
+
+    /**
+     * update the placement of popover
+     */
+
+  }, {
+    key: '_updatePlacement',
+    value: function _updatePlacement() {
+      switch (this._placement) {
+        case 'top':
+          return 'bottom';
+        case 'bottom':
+          return 'top';
+        case 'left':
+          return 'right';
+        case 'right':
+          return 'left';
+        default:
+          return this._placement;
+      }
+    }
+
+    /**
+     * Styles the popover based on placement attribute
+     * @private
+     */
+
+  }, {
+    key: '_stylePopover',
+    value: function _stylePopover() {
+      var rect = this._target.getBoundingClientRect(); //popover real dimensions
+
+      var // link rect | window vertical and horizontal scroll
+      scroll = _pfUtils.pfUtil.getScroll();
+
+      var //link real dimensions
+      linkDimensions = { w: rect.right - rect.left, h: rect.bottom - rect.top };
+
+      var popoverDimensions = { w: this.popover.offsetWidth, h: this.popover.offsetHeight };
+
+      //apply styling
+      switch (this._placement) {
+        case 'top':
+          //TOP
+          this.popover.style.top = rect.top + scroll.y - popoverDimensions.h + 'px';
+          this.popover.style.left = rect.left + scroll.x - popoverDimensions.w / 2 + linkDimensions.w / 2 + 'px';
+          break;
+
+        case 'bottom':
+          //BOTTOM
+          this.popover.style.top = rect.top + scroll.y + linkDimensions.h + 'px';
+          this.popover.style.left = rect.left + scroll.x - popoverDimensions.w / 2 + linkDimensions.w / 2 + 'px';
+          break;
+
+        case 'left':
+          //LEFT
+          this.popover.style.top = rect.top + scroll.y - popoverDimensions.h / 2 + linkDimensions.h / 2 + 'px';
+          this.popover.style.left = rect.left + scroll.x - popoverDimensions.w + 'px';
+          break;
+
+        case 'right':
+          //RIGHT
+          this.popover.style.top = rect.top + scroll.y - popoverDimensions.h / 2 + linkDimensions.h / 2 + 'px';
+          this.popover.style.left = rect.left + scroll.x + linkDimensions.w + 'px';
+          break;
+      }
+      this.popover.className.indexOf(this._placement) === -1 && (this.popover.className = this.popover.className.replace(/\b(top|bottom|left|right)+/, this._placement));
+    }
+
+    /**
+     * check the placement of popover
+     */
+
+  }, {
+    key: '_checkPlacement',
+    value: function _checkPlacement() {
+      if (!_pfUtils.pfUtil.isElementInViewport(this.popover)) {
+        this._placement = this._updatePlacement();
+        this._stylePopover();
+      }
+    }
+
+    /**
+     * Makes popover visible
+     * @private
+     */
+
+  }, {
+    key: '_showPopover',
+    value: function _showPopover() {
+      !/\bin/.test(this.popover.className) && _pfUtils.pfUtil.addClass(this.popover, 'in');
+    }
+  }, {
+    key: 'animation',
+    get: function get() {
+      return this._animation;
+    }
+
+    /**
+     * Set animation class
+     *
+     * @param {string} value The animation class
+     */
+    ,
+    set: function set(value) {
+      if (this._animation !== value) {
+        this._animation = value;
+        this.setAttribute('animation', value);
+      }
+    }
+
+    /**
+     * Get the popover container-selector
+     *
+     * @returns {string} The container element selector
+     */
+
+  }, {
+    key: 'containerSelector',
+    get: function get() {
+      return this._containerSelector;
+    }
+
+    /**
+     * Set the popover container-selector
+     *
+     * @param {string} value The container element selector
+     */
+    ,
+    set: function set(value) {
+      if (this._containerSelector !== value) {
+        this._containerSelector = value;
+        this._container = document.querySelector(this._containerSelector);
+        this.setAttribute('container-selector', value);
+      }
+    }
+
+    /**
+     * Get the animation duration
+     *
+     * @returns {string} The animation duration
+     */
+
+  }, {
+    key: 'duration',
+    get: function get() {
+      return this._duration;
+    }
+
+    /**
+     * Set the animation duration
+     *
+     * @param {string} value The animation duration
+     */
+    ,
+    set: function set(value) {
+      if (this._duration !== value) {
+        this._duration = value;
+        this.setAttribute('duration', value);
+      }
+    }
+
+    /**
+     * Get the animation delay
+     *
+     * @returns {string} The animation delay
+     */
+
+  }, {
+    key: 'delay',
+    get: function get() {
+      return this._duration;
+    }
+
+    /**
+     * Set the animation delay
+     *
+     * @param {string} value The animation delay
+     */
+    ,
+    set: function set(value) {
+      if (this._delay !== value) {
+        this._delay = value;
+        this.setAttribute('delay', value);
+      }
+    }
+
+    /**
+     * Get the placement this._placement
+     *
+     * @returns {string} The placement this._placement left, top, bottom, right
+     */
+
+  }, {
+    key: 'placement',
+    get: function get() {
+      return this._placement;
+    }
+
+    /**
+     * Set placement this._placement
+     *
+     * @param {string} value The placement this._placement left, top, bottom, right
+     */
+    ,
+    set: function set(value) {
+      if (this._placement !== value) {
+        this._placement = value;
+        this.setAttribute('placement', value);
+      }
+    }
+
+    /**
+    * Get the target-selector
+    *
+    * @returns {string} The target element selector
+    */
+
+  }, {
+    key: 'targetSelector',
+    get: function get() {
+      return this._targetSelector;
+    }
+
+    /**
+     * Set target-selector
+     *
+     * @param {string} value The target element selector
+     */
+    ,
+    set: function set(value) {
+      if (this._targetSelector !== value) {
+        this._targetSelector = value;
+        this._target = document.querySelector(this._targetSelector);
+        this.setAttribute('target-selector', value);
+      }
+    }
+
+    /**
+     * Get the popover-title
+     *
+     * @return {string} the title of popover
+     */
+
+  }, {
+    key: 'popoverTitle',
+    get: function get() {
+      return this._popoverTitle;
+    }
+
+    /**
+     * Set popover-title
+     *
+     * @param {string} value The title of popover
+     */
+    ,
+    set: function set(value) {
+      if (this._popoverTitle !== value) {
+        this._popoverTitle = value;
+        this.setAttribute('popover-title', value);
+      }
+    }
+  }]);
+
+  return PfPopover;
+}(HTMLElement);
+
+window.customElements.define('pf-popover', PfPopover);
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var PfPopoverTemplate = "\n<div class=\"popover\" role=\"popover\">\n  <div class=\"arrow\"></div>\n  <h3 class=\"popover-title closable\"></h3>\n  <div class=\"popover-content\"></div>\n</div>\n";
+
+exports.default = PfPopoverTemplate;
+
+/***/ }),
 /* 39 */,
 /* 40 */,
 /* 41 */,
@@ -6279,26 +6279,27 @@ exports.default = PfSwitchTemplate;
 /* 44 */,
 /* 45 */,
 /* 46 */,
-/* 47 */
+/* 47 */,
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 /* Require the HTML Element Shim */
-__webpack_require__(48);
+__webpack_require__(49);
 
 /** PF Alert Component **/
 __webpack_require__(3);
 
 /** PfListView Component **/
-__webpack_require__(28);
-
-/** PfTemplateRepeaterComponent **/
 __webpack_require__(30);
 
+/** PfTemplateRepeaterComponent **/
+__webpack_require__(32);
+
 /** PfTemplateComponent **/
-__webpack_require__(31);
+__webpack_require__(33);
 
 /** PF Tabs Component **/
 __webpack_require__(5);
@@ -6316,10 +6317,10 @@ __webpack_require__(15);
 __webpack_require__(0);
 
 /** PF I18N **/
-__webpack_require__(32);
+__webpack_require__(34);
 
 /** PF Hello **/
-__webpack_require__(33);
+__webpack_require__(35);
 
 /** PF Dropdown **/
 __webpack_require__(22);
@@ -6328,16 +6329,16 @@ __webpack_require__(22);
 __webpack_require__(23);
 
 /** PF Popover **/
-__webpack_require__(35);
+__webpack_require__(37);
 
 /** PF Accordion Component **/
 __webpack_require__(24);
 
 /** PF Switch **/
-__webpack_require__(37);
+__webpack_require__(28);
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
