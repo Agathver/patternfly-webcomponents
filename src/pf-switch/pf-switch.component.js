@@ -52,7 +52,13 @@ export class PfSwitch extends HTMLElement {
 
     if (this._stateElement) {
       this._stateElement.addEventListener('change', () => {
-        this.activated = this._stateElement.checked;
+        if (this._stateElement.indeterminate) {
+          this.state = 'indeterminate';
+        } else if (this._stateElement.checked) {
+          this.state = 'closed';
+        } else {
+          this.state = 'open';
+        }
       });
       this._stateElement.style.display = 'none';
     }
@@ -66,7 +72,7 @@ export class PfSwitch extends HTMLElement {
    * @param {string} newValue The new attribute value
    */
   attributeChangedCallback(attrName, oldValue, newValue) {
-    if (attrName === 'state') {
+    if (attrName === 'state' && newValue !== oldValue) {
       this._setState(newValue);
       this.dispatchEvent(new Event('pf-switch.change', {
         bubbles: false

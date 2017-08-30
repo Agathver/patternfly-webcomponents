@@ -148,7 +148,13 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
 
       if (this._stateElement) {
         this._stateElement.addEventListener('change', function () {
-          _this2.activated = _this2._stateElement.checked;
+          if (_this2._stateElement.indeterminate) {
+            _this2.state = 'indeterminate';
+          } else if (_this2._stateElement.checked) {
+            _this2.state = 'closed';
+          } else {
+            _this2.state = 'open';
+          }
         });
         this._stateElement.style.display = 'none';
       }
@@ -165,7 +171,7 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
   }, {
     key: 'attributeChangedCallback',
     value: function attributeChangedCallback(attrName, oldValue, newValue) {
-      if (attrName === 'state') {
+      if (attrName === 'state' && newValue !== oldValue) {
         this._setState(newValue);
         this.dispatchEvent(new Event('pf-switch.change', {
           bubbles: false
