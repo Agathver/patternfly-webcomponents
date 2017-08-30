@@ -60,12 +60,12 @@
 /******/ 	__webpack_require__.p = "./";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 42);
+/******/ 	return __webpack_require__(__webpack_require__.s = 45);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 28:
+/***/ 30:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78,7 +78,7 @@ exports.PfSwitch = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _pfSwitch = __webpack_require__(29);
+var _pfSwitch = __webpack_require__(31);
 
 var _pfSwitch2 = _interopRequireDefault(_pfSwitch);
 
@@ -135,7 +135,6 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
      * Called when an instance of the element is created
      */
     value: function connectedCallback() {
-      var _this2 = this;
 
       this.insertBefore(this._template.content, this.firstChild);
       this._stateElement = this.querySelector('input');
@@ -145,19 +144,6 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
       this._setDisabled(this.hasAttribute('disabled'));
       this._setHidden(this.hasAttribute('hidden'));
       this._setReadOnly(this.hasAttribute('readonly'));
-
-      if (this._stateElement) {
-        this._stateElement.addEventListener('change', function () {
-          if (_this2._stateElement.indeterminate) {
-            _this2.state = 'indeterminate';
-          } else if (_this2._stateElement.checked) {
-            _this2.state = 'closed';
-          } else {
-            _this2.state = 'open';
-          }
-        });
-        this._stateElement.style.display = 'none';
-      }
     }
 
     /**
@@ -643,7 +629,7 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
 
 /***/ }),
 
-/***/ 29:
+/***/ 31:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -657,14 +643,14 @@ exports.default = PfSwitchTemplate;
 
 /***/ }),
 
-/***/ 42:
+/***/ 45:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 /** PF switch Component **/
-__webpack_require__(28);
+__webpack_require__(30);
 
 /***/ })
 

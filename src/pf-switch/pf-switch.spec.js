@@ -164,17 +164,5 @@ describe ("PatternFly Switch Component Tests", function () {
         expect(stateElement.indeterminate).toBe(true);
       });
     });
-
-    xit('underlying checkbox state updates component', () => {
-      addElementToBody(customElement).then(() => {
-        stateElement.checked = true;
-        expect(customElement.state).toBe('closed');
-        stateElement.checked = false;
-        expect(customElement.state).toBe('open');
-        stateElement.indeterminate = true;
-        expect(customElement.state).toBe('indeterminate');
-      });
-    });
   });
-
 });

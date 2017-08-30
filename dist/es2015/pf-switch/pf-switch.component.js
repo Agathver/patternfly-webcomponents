@@ -64,7 +64,6 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
      * Called when an instance of the element is created
      */
     value: function connectedCallback() {
-      var _this2 = this;
 
       this.insertBefore(this._template.content, this.firstChild);
       this._stateElement = this.querySelector('input');
@@ -74,19 +73,6 @@ var PfSwitch = exports.PfSwitch = function (_HTMLElement) {
       this._setDisabled(this.hasAttribute('disabled'));
       this._setHidden(this.hasAttribute('hidden'));
       this._setReadOnly(this.hasAttribute('readonly'));
-
-      if (this._stateElement) {
-        this._stateElement.addEventListener('change', function () {
-          if (_this2._stateElement.indeterminate) {
-            _this2.state = 'indeterminate';
-          } else if (_this2._stateElement.checked) {
-            _this2.state = 'closed';
-          } else {
-            _this2.state = 'open';
-          }
-        });
-        this._stateElement.style.display = 'none';
-      }
     }
 
     /**

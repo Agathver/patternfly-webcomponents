@@ -49,19 +49,6 @@ export class PfSwitch extends HTMLElement {
     this._setDisabled(this.hasAttribute('disabled'));
     this._setHidden(this.hasAttribute('hidden'));
     this._setReadOnly(this.hasAttribute('readonly'));
-
-    if (this._stateElement) {
-      this._stateElement.addEventListener('change', () => {
-        if (this._stateElement.indeterminate) {
-          this.state = 'indeterminate';
-        } else if (this._stateElement.checked) {
-          this.state = 'closed';
-        } else {
-          this.state = 'open';
-        }
-      });
-      this._stateElement.style.display = 'none';
-    }
   }
 
   /**
